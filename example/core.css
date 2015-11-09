@@ -1,0 +1,28 @@
+body
+{
+    font-family: Arial;
+}
+
+pre
+{
+    font-size: 1em;
+}
+
+.row
+{
+    margin-bottom: 4px;
+    padding: 8px;
+    border: #eee solid 1px;
+    word-wrap: break-word;
+}
+
+.box {
+    display: table;
+    height: 50px;
+}
+
+.box span {
+    display: table-cell;
+    vertical-align: middle;
+    padding-right: 8px;
+}

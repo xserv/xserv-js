@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML5 Demo</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="xserv.js"></script>
+    <link rel="stylesheet" type="text/css" href="core.css">
+  </head>
+  
+  <body>
+    <div class="box">
+      <span>Connection status</span>
+      <span>
+	<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px">
+	  <circle id="state" cx="10" cy="10" r="10" fill="red" />
+	</svg>
+      </span>
+    </div>
+    <pre id="output"></pre>
+  </body>
+  <script>
+    $(document).ready(function() {
+	
+	var xserv = new Xserv("abcde-1");
+	// xserv.setReconnectInterval(20000);
+	
+	xserv.addEventListener("open", function(event) {
+		$("#state").attr('fill', 'green');
+	    });
+	
+	xserv.addEventListener("close", function(event) {
+		$("#state").attr('fill', 'red');
+	    });
+	
+	xserv.addEventListener("events", function(id, name, topic, message, timestamp) {
+		var html = "<div id='blah' class='row'>" + timestamp + " " + message + "</div>";
+		$(html).hide().appendTo("#output").fadeIn(1000);
+	    });
+	
+	xserv.bind("test", "all");
+        // xserv.bind("test", "pippo");
+        // xserv.unbind("test", "pippo");
+        // xserv.unbind("test");
+        xserv.connect();
+    });
+  </script>
+</html>
