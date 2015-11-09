@@ -21,26 +21,26 @@
   <script>
     $(document).ready(function() {
 	
-	var xserv = new Xserv("abcde-1");
+	var xserv = new Xserv('qLxFC-1'); // app_id
 	// xserv.setReconnectInterval(20000);
 	
-	xserv.addEventListener("open", function(event) {
-		$("#state").attr('fill', 'green');
+	xserv.addEventListener('open', function(event) {
+		$('#state').attr('fill', 'green');
 	    });
 	
-	xserv.addEventListener("close", function(event) {
-		$("#state").attr('fill', 'red');
+	xserv.addEventListener('close', function(event) {
+		$('#state').attr('fill', 'red');
 	    });
 	
-	xserv.addEventListener("events", function(id, name, topic, message, timestamp) {
+	xserv.addEventListener('events', function(id, name, topic, message, timestamp) {
 		var html = "<div id='blah' class='row'>" + timestamp + " " + message + "</div>";
-		$(html).hide().appendTo("#output").fadeIn(1000);
+		$(html).hide().appendTo('#output').fadeIn(1000);
 	    });
 	
-	xserv.bind("test", "all");
-        // xserv.bind("test", "pippo");
-        // xserv.unbind("test", "pippo");
-        // xserv.unbind("test");
+	xserv.bind('test', 'all');
+        // xserv.bind('test', 'pippo');
+        // xserv.unbind('test', 'pippo');
+        // xserv.unbind('test');
         xserv.connect();
     });
   </script>

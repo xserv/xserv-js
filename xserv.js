@@ -3,8 +3,8 @@
 	var BIND = 100;
 	var UNBIND = 101;
 	var HISTORY = 102;
-	var HISTORY_ID = "id";
-	var HISTORY_TIMESTAMP = "timestamp";
+	var HISTORY_ID = 'id';
+	var HISTORY_TIMESTAMP = 'timestamp';
 	
 	this.app_id = app_id;
 	this.url = 'ws://localhost:4321/ws';
@@ -22,15 +22,15 @@
 	// end
 	
 	this.addEventListener = function(name, callback) {
-	    if (name == "message") {
+	    if (name == 'message') {
 		
-	    } else if (name == "events") {
+	    } else if (name == 'events') {
 		var event_callback = function(event) {
 		    var ev = JSON.parse(event.data);
 		    callback(ev.id, ev.name, ev.topic, ev.message, ev.timestamp);
 		};
 		
-		this.listeners.push({event: "message", callback: event_callback});
+		this.listeners.push({event: 'message', callback: event_callback});
 	    } else {
 		this.listeners.push({event: name, callback: callback});
 	    }
@@ -94,7 +94,7 @@
 	};
 	
 	this.unbind = function(topic, event) {
-	    event = event || "";
+	    event = event || '';
 	    
 	    this.ops.push({app_id: this.app_id, 
 			op: UNBIND, 
