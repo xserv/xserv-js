@@ -35,6 +35,11 @@
 	xserv.addEventListener('events', function(id, name, topic, message, timestamp) {
 		var html = "<div id='blah' class='row'>" + timestamp + " " + message + "</div>";
 		$(html).hide().appendTo('#output').fadeIn(1000);
+            });
+        
+        xserv.addEventListener('op_succeeded', function(op, topic, event) {
+		var html = "<div id='blah' class='row'>" + op + " " + topic + " " + event + "</div>";
+		$(html).hide().appendTo('#output').fadeIn(1000);
 	    });
 	
 	xserv.bind('test', 'all');

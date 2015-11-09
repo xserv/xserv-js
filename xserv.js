@@ -27,7 +27,18 @@
 	    } else if (name == 'events') {
 		var event_callback = function(event) {
 		    var ev = JSON.parse(event.data);
-		    callback(ev.id, ev.name, ev.topic, ev.message, ev.timestamp);
+		    if (!ev.op) {
+			callback(ev.id, ev.name, ev.topic, ev.message, ev.timestamp);
+		    }
+		};
+		
+		this.listeners.push({event: 'message', callback: event_callback});
+	    } else if (name == 'op_succeeded') {
+		var event_callback = function(event) {
+		    var ev = JSON.parse(event.data);
+		    if (ev.op) {
+			callback(ev.op, ev.topic, ev.event);
+		    }
 		};
 		
 		this.listeners.push({event: 'message', callback: event_callback});
