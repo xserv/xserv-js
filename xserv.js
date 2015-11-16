@@ -156,22 +156,24 @@
 			       event: event});
 	};
 	
-	this.historyById = function(topic, event, value) {
+	this.historyById = function(topic, event, value, limit) {
 	    add_op.bind(this)({app_id: this.app_id, 
 			       op: HISTORY, 
 			       topic: topic, 
 			       event: event,
 			       arg1: HISTORY_ID,
-			       arg2: String(value)});
+			       arg2: String(value),
+			       arg3: String(limit)});
 	};
 	
-	this.historyByTimestamp = function(topic, event, value) {
+	this.historyByTimestamp = function(topic, event, value, limit) {
 	    add_op.bind(this)({app_id: this.app_id, 
 			       op: HISTORY, 
 			       topic: topic, 
-			       event: event,
-			       arg1: HISTORY_TIMESTAMP,
-			       arg2: String(value)});
+			       event: event, 
+			       arg1: HISTORY_TIMESTAMP, 
+			       arg2: String(value), 
+			       arg3: String(limit)});
 	};
     };
     

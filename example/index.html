@@ -43,11 +43,14 @@
 	    $(html).hide().appendTo('#output').fadeIn(1000);
 	});
 	
-	xserv.bind('test', 'all');
+        xserv.bind('test', 'all');
+        xserv.bind('test', 'all');
         xserv.bind('test', 'pippo');
         xserv.unbind('test', 'pippo');
         xserv.unbind('test2');
-        xserv.historyById('test', 'all', 1);
+        xserv.historyById('test', 'all', 1, 5);
+        // xserv.historyById('test', 'all', 1, 2000);
+        xserv.historyById('test', 'pippo', 1); // default limit 100
         
         xserv.connect();
     });
