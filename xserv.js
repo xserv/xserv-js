@@ -174,11 +174,18 @@
 	};
     };
     
+    // events:op op
     Xserv.BIND = 100;
     Xserv.UNBIND = 101;
     Xserv.HISTORY = 102;
+    
+    // in uso in history
     Xserv.HISTORY_ID = 'id';
     Xserv.HISTORY_TIMESTAMP = 'timestamp';
+    
+    // events:op status code
+    Xserv.FAIL = 0;
+    Xserv.DONE = 1;
     
     this.Xserv = Xserv;
 }).call(this);
