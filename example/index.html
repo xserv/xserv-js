@@ -25,27 +25,29 @@
 	// xserv.setReconnectInterval(20000);
 	
 	xserv.addEventListener('open', function(event) {
-		$('#state').attr('fill', 'green');
-	    });
+            $('#state').attr('fill', 'green');
+	});
 	
 	xserv.addEventListener('close', function(event) {
-		$('#state').attr('fill', 'red');
-	    });
+	    $('#state').attr('fill', 'red');
+	});
 	
 	xserv.addEventListener('events', function(id, name, topic, message, timestamp) {
-		var html = "<div id='blah' class='row'>" + timestamp + " " + message + "</div>";
-		$(html).hide().appendTo('#output').fadeIn(1000);
-            });
+            var html = "<div id='blah' class='row'>ev " + timestamp + " " + message + "</div>";
+            $(html).hide().appendTo('#output').fadeIn(1000);
+        });
         
-        xserv.addEventListener('op_succeeded', function(op, topic, event) {
-		var html = "<div id='blah' class='row'>" + op + " " + topic + " " + event + "</div>";
-		$(html).hide().appendTo('#output').fadeIn(1000);
-	    });
+        xserv.addEventListener('events:op', function(op, topic, event, message, success, description) {
+            var html = "<div id='blah' class='row'>op " + op + " " + topic + " " + event + " " + message + " (" + success + ") " + description + "</div>";
+	    $(html).hide().appendTo('#output').fadeIn(1000);
+	});
 	
 	xserv.bind('test', 'all');
         // xserv.bind('test', 'pippo');
-        // xserv.unbind('test', 'pippo');
+        // xserv.unbind('test', 'pippo2');
         // xserv.unbind('test');
+        xserv.historyById('test', 'all', 1);
+        
         xserv.connect();
     });
   </script>
