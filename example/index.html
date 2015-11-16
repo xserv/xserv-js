@@ -34,12 +34,12 @@
 	});
 	
 	xserv.addEventListener('events', function(event) {
-            var html = "<div id='blah' class='row'>ev " + JSON.stringify(event) + "</div>";
+            var html = "<div id='blah' class='row'>EVENTS " + JSON.stringify(event) + "</div>";
             $(html).hide().appendTo('#output').fadeIn(1000);
         });
         
         xserv.addEventListener('events:op', function(event_op) {
-            var html = "<div id='blah' class='row'>op " + JSON.stringify(event_op) + "</div>";
+            var html = "<div id='blah' class='row'>OP " + Xserv.BIND + " " + JSON.stringify(event_op) + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
 	});
 	
