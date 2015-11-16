@@ -30,7 +30,7 @@
 		
 	    } else if (name == 'events') {
 		var event_callback = function(event) {
-		    // intercetta solo i messaggi
+		    // intercetta solo i messaggi, eventi da http
 		    if (event.data.charAt(0) != OP_SEP) {
 			var ev = JSON.parse(event.data);
 			callback(ev.id, ev.name, ev.topic, ev.message, ev.timestamp);
@@ -40,7 +40,7 @@
 		this.listeners.push({event: 'message', callback: event_callback});
 	    } else if (name == 'events:op') {
 		var event_callback = function(event) {
-		    // intercetta solo gli event dei comandi
+		    // intercetta solo gli op_response, eventi su comandi
 		    if (event.data.charAt(0) == OP_SEP) {
 			var ev = event.data.split(OP_SEP);
 			if (ev.length >= 7) {
@@ -153,7 +153,7 @@
 			   op: HISTORY, 
 			   topic: topic, 
 			   event: event,
-			   arg1: HISTORY_TIMESTAMP.toString(),
+			   arg1: HISTORY_TIMESTAMP,
 			   arg2: String(value)});
 	};
     };

@@ -33,18 +33,18 @@
 	});
 	
 	xserv.addEventListener('events', function(id, name, topic, message, timestamp) {
-            var html = "<div id='blah' class='row'>ev " + timestamp + " " + message + "</div>";
+            var html = "<div id='blah' class='row'>ev " + id + " " + " " + name + " " + topic + " " + message + " " + timestamp + "</div>";
             $(html).hide().appendTo('#output').fadeIn(1000);
         });
         
-        xserv.addEventListener('events:op', function(op, topic, event, message, success, description) {
-            var html = "<div id='blah' class='row'>op " + op + " " + topic + " " + event + " " + message + " (" + success + ") " + description + "</div>";
+        xserv.addEventListener('events:op', function(op, topic, event, data, success, description) {
+            var html = "<div id='blah' class='row'>op " + op + " " + topic + " " + event + " " + data + " (" + success + ") " + description + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
 	});
 	
 	xserv.bind('test', 'all');
-        // xserv.bind('test', 'pippo');
-        // xserv.unbind('test', 'pippo2');
+        xserv.bind('test', 'pippo');
+        xserv.unbind('test', 'pippo');
         // xserv.unbind('test');
         xserv.historyById('test', 'all', 1);
         
