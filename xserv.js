@@ -39,8 +39,8 @@
 		    // intercetta solo gli op_response, eventi su comandi
 		    if (event.data.charAt(0) == OP_SEP) {
 			var arr = event.data.split(OP_SEP);
-			if (arr.length >= 7) {
-			    var data = arr[5]; // base64
+			if (arr.length >= 8) {
+			    var data = arr[6]; // base64
 			    if (data.length > 0) {
 				data = Base64.decode(data); // decode
 				try {
@@ -48,12 +48,13 @@
 				} catch(e) {
 				}
 			    }
-			    var ev = {rc: parseInt(arr[1], 10),
-				      name: stringifyOpCode(arr[2]),
-				      topic: arr[3],
-				      event: arr[4],
+			    var ev = {app_id: arr[1],
+				      rc: parseInt(arr[2], 10),
+				      name: stringifyOpCode(arr[3]),
+				      topic: arr[4],
+				      event: arr[5],
 				      data: data,
-				      descr: arr[6]};
+				      descr: arr[7]};
 			    callback(ev);
 			}
 		    }
