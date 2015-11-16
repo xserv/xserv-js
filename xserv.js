@@ -44,7 +44,7 @@
 		    if (event.data.charAt(0) == OP_SEP) {
 			var arr = event.data.split(OP_SEP);
 			if (arr.length >= 7) {
-			    var data = arr[4]; // base64
+			    var data = arr[5]; // base64
 			    if (data.length > 0) {
 				data = Base64.decode(data); // decode
 				try {
@@ -52,10 +52,10 @@
 				} catch(e) {
 				}
 			    }
-			    var ev = {name: stringifyOpCode(arr[1]),
-				      success: arr[5] == 'true',
-				      topic: arr[2],
-				      event: arr[3],
+			    var ev = {code: parseInt(arr[1], 10),
+				      name: stringifyOpCode(arr[2]),
+				      topic: arr[3],
+				      event: arr[4],
 				      data: data,
 				      descr: arr[6]};
 			    callback(ev);
