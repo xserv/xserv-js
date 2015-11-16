@@ -48,8 +48,7 @@
 				} catch(e) {
 				}
 			    }
-			    var ev = {code: parseInt(arr[1], 10),
-				      op: parseInt(arr[2], 10),
+			    var ev = {rc: parseInt(arr[1], 10),
 				      name: stringifyOpCode(arr[2]),
 				      topic: arr[3],
 				      event: arr[4],
@@ -183,9 +182,9 @@
     Xserv.HISTORY_ID = 'id';
     Xserv.HISTORY_TIMESTAMP = 'timestamp';
     
-    // events:op status code
-    Xserv.FAIL = 0;
-    Xserv.DONE = 1;
+    // events:op result_code
+    Xserv.RC_FAIL = 0;
+    Xserv.RC_DONE = 1;
     
     this.Xserv = Xserv;
 }).call(this);
