@@ -33,7 +33,7 @@
 		    // intercetta solo i messaggi, eventi da http
 		    if (event.data.charAt(0) != OP_SEP) {
 			var ev = JSON.parse(event.data);
-			callback(ev.id, ev.name, ev.topic, ev.message, ev.timestamp);
+			callback(ev);
 		    }
 		}.bind(this);
 		
@@ -42,9 +42,9 @@
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
 		    if (event.data.charAt(0) == OP_SEP) {
-			var ev = event.data.split(OP_SEP);
-			if (ev.length >= 7) {
-			    var data = ev[4]; // base64
+			var arr = event.data.split(OP_SEP);
+			if (arr.length >= 7) {
+			    var data = arr[4]; // base64
 			    if (data.length > 0) {
 				data = Base64.decode(data); // decode
 				try {
@@ -52,7 +52,13 @@
 				} catch(e) {
 				}
 			    }
-			    callback(this.stringifyOpCode(ev[1]), ev[2], ev[3], data, ev[5] == 'true', ev[6]);
+			    var ev = {name: stringifyOpCode(arr[1]),
+				      success: arr[5] == 'true',
+				      topic: arr[2],
+				      event: arr[3],
+				      data: data,
+				      descr: arr[6]};
+			    callback(ev);
 			}
 		    }
 		}.bind(this);
@@ -102,6 +108,10 @@
 	    }
 	};
 	
+	this.setReconnectInterval = function(value) {
+	    this.reconnectInterval = value;
+	};
+	
 	// privato
 	var send =  function(message) {
 	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
@@ -109,7 +119,18 @@
 	    }
 	};
 	
-	this.stringifyOpCode = function(code) {
+	// privato
+	var add_op =  function(json) {
+	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
+		// console.log('exec diretta');
+		send.bind(this)(JSON.stringify(json));
+	    } else {
+		this.ops.push(json);
+	    }
+	};
+	
+	// privato
+	var stringifyOpCode = function(code) {
 	    if (code == BIND) {
 		return 'bind';
 	    } else if (code == UNBIND) {
@@ -119,42 +140,38 @@
 	    }
 	};
 	
-	this.setReconnectInterval = function(value) {
-	    this.reconnectInterval = value;
-	};
-	
 	this.bind = function(topic, event) {
-	    this.ops.push({app_id: this.app_id, 
-			   op: BIND, 
-			   topic: topic, 
-			   event: event});
+	    add_op.bind(this)({app_id: this.app_id, 
+			       op: BIND, 
+			       topic: topic, 
+			       event: event});
 	};
 	
 	this.unbind = function(topic, event) {
 	    event = event || '';
 	    
-	    this.ops.push({app_id: this.app_id, 
-			op: UNBIND, 
-			topic: topic, 
-			event: event});
+	    add_op.bind(this)({app_id: this.app_id, 
+			       op: UNBIND, 
+			       topic: topic, 
+			       event: event});
 	};
 	
 	this.historyById = function(topic, event, value) {
-	    this.ops.push({app_id: this.app_id, 
-			   op: HISTORY, 
-			   topic: topic, 
-			   event: event,
-			   arg1: HISTORY_ID,
-			   arg2: String(value)});
+	    add_op.bind(this)({app_id: this.app_id, 
+			       op: HISTORY, 
+			       topic: topic, 
+			       event: event,
+			       arg1: HISTORY_ID,
+			       arg2: String(value)});
 	};
 	
 	this.historyByTimestamp = function(topic, event, value) {
-	    this.ops.push({app_id: this.app_id, 
-			   op: HISTORY, 
-			   topic: topic, 
-			   event: event,
-			   arg1: HISTORY_TIMESTAMP,
-			   arg2: String(value)});
+	    add_op.bind(this)({app_id: this.app_id, 
+			       op: HISTORY, 
+			       topic: topic, 
+			       event: event,
+			       arg1: HISTORY_TIMESTAMP,
+			       arg2: String(value)});
 	};
     };
     
