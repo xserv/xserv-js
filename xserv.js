@@ -18,12 +18,12 @@
 	this.reconnectInterval = 5000;
 	this.autoreconnect = false;
 	
-	// singleton
+	// singleton start
 	if (arguments.callee._singletonInstance) {
 	    return arguments.callee._singletonInstance;
 	}
 	arguments.callee._singletonInstance = this;
-	//
+	// end
 	
 	this.addEventListener = function(name, callback) {
 	    if (name == 'message') {
