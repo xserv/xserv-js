@@ -39,7 +39,7 @@
         });
         
         xserv.addEventListener('events:op', function(event_op) {
-            var html = "<div id='blah' class='row'>OP " + Xserv.BIND + " " + JSON.stringify(event_op) + "</div>";
+            var html = "<div id='blah' class='row'>OP " + JSON.stringify(event_op) + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
 	});
 	
