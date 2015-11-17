@@ -120,18 +120,22 @@
 			    pass: 'pippo'
 			};
 			
+			$.ajaxSetup({cache: false});
 			$.post(json.auth_endpoint, params).always(function(data) {
+				// clone perche' non si tocca quello in lista op
+				var new_json = $.extend({}, json);
+				delete new_json.auth_endpoint;
+				
 				var user_data = null;
 				try {
 				    user_data = JSON.parse(data);
 				} catch(e) {}
 				if (user_data) {
 				    // double quote json di user_data
-				    json.arg1 = JSON.stringify(user_data.data);
-				    json.arg2 = user_data.sign;
+				    new_json.arg1 = JSON.stringify(user_data.data);
+				    new_json.arg2 = user_data.sign;
 				}
-				delete json.auth_endpoint;
-				this.conn.send(JSON.stringify(json));
+				this.conn.send(JSON.stringify(new_json));
 			    }.bind(this));
 		    } else {
 			this.conn.send(JSON.stringify(json));
