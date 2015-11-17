@@ -45,8 +45,7 @@
 				data = Base64.decode(data); // decode
 				try {
 				    data = JSON.parse(data);
-				} catch(e) {
-				}
+				} catch(e) {}
 			    }
 			    var ev = {app_id: arr[1],
 				      rc: parseInt(arr[2], 10),
@@ -84,7 +83,7 @@
 		// su connect
 		this.conn.onopen = function(event) {
 		    for (var j in this.ops) {
-			send.bind(this)(JSON.stringify(this.ops[j]));
+			send.bind(this)(this.ops[j]);
 		    }
 		}.bind(this);
 		
@@ -110,9 +109,36 @@
 	};
 	
 	// privato
-	var send =  function(message) {
+	var send =  function(json) {
 	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
-		this.conn.send(message);
+		if (json.op == Xserv.BIND && json.topic.charAt(0) == '@') {
+		    if (json.auth_endpoint) {
+			var params = {
+			    app_id: json.app_id,
+			    topic: json.topic,
+			    user: 'amatig',
+			    pass: 'pippo'
+			};
+			
+			$.post(json.auth_endpoint, params).always(function(data) {
+				var user_data = null;
+				try {
+				    user_data = JSON.parse(data);
+				} catch(e) {}
+				if (user_data) {
+				    // double quote json di user_data
+				    json.arg1 = JSON.stringify(user_data.data);
+				    json.arg2 = user_data.sign;
+				}
+				delete json.auth_endpoint;
+				this.conn.send(JSON.stringify(json));
+			    }.bind(this));
+		    } else {
+			this.conn.send(JSON.stringify(json));
+		    }
+		} else {
+		    this.conn.send(JSON.stringify(json));
+		}
 	    }
 	};
 	
@@ -120,8 +146,9 @@
 	var add_op =  function(json) {
 	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
 		// console.log('exec diretta');
-		send.bind(this)(JSON.stringify(json));
+		send.bind(this)(json);
 	    } else {
+		// console.log('exec indiretta');
 		this.ops.push(json);
 	    }
 	};
@@ -137,11 +164,12 @@
 	    }
 	};
 	
-	this.bind = function(topic, event) {
+	this.bind = function(topic, event, auth_endpoint) {
 	    add_op.bind(this)({app_id: this.app_id, 
 			       op: Xserv.BIND, 
 			       topic: topic, 
-			       event: event});
+			       event: event,
+			       auth_endpoint: auth_endpoint});
 	};
 	
 	this.unbind = function(topic, event) {
