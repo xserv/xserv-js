@@ -44,7 +44,7 @@
 	});
 	
         xserv.bind('milano', 'all');
-        xserv.bind('@milano', 'all', 'http://localhost:4321/auth_user');
+        xserv.bind('@milano', 'all', {endpoint:'http://localhost:4321/auth_user', user:'amatig', pass:'pippo'});
         // xserv.bind('test', 'all');
         // xserv.bind('test', 'pippo');
         // xserv.unbind('test', 'pippo');

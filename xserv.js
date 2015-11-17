@@ -113,28 +113,32 @@
 	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
 		if (json.op == Xserv.BIND && json.topic.charAt(0) == '@') {
 		    if (json.auth_endpoint) {
+			var auth_url = json.auth_endpoint.endpoint;
+			var auth_user = json.auth_endpoint.user;
+			var auth_pass = json.auth_endpoint.pass;
+			
 			var params = {
 			    app_id: json.app_id,
 			    topic: json.topic,
-			    user: 'amatig',
-			    pass: 'pippo'
+			    user: auth_user,
+			    pass: auth_pass
 			};
 			
 			$.ajaxSetup({cache: false});
-			$.post(json.auth_endpoint, params).always(function(data) {
+			$.post(auth_url, params).always(function(data) {
 				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
 				delete new_json.auth_endpoint;
 				
-				var user_data = null;
 				try {
-				    user_data = JSON.parse(data);
+				    var user_data = JSON.parse(data);
+				    if (user_data) {
+					// double quote json di user_data
+					new_json.arg1 = JSON.stringify(user_data.data);
+					new_json.arg2 = user_data.sign;
+				    }
 				} catch(e) {}
-				if (user_data) {
-				    // double quote json di user_data
-				    new_json.arg1 = JSON.stringify(user_data.data);
-				    new_json.arg2 = user_data.sign;
-				}
+				
 				this.conn.send(JSON.stringify(new_json));
 			    }.bind(this));
 		    } else {
