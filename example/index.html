@@ -47,17 +47,18 @@
             var html = "<div id='blah' class='row'>OP " + JSON.stringify(data) + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
             
-            if (data.name == 'bind' && data.rc == 1 && data.topic.charAt(0) == '@' && xserv.user_data) {
-                $("#info").text(xserv.user_data);
+            if (data.op == Xserv.BIND && data.rc == Xserv.RC_DONE && data.topic.charAt(0) == '@' && xserv.user_data) {
+                $("#info").text(xserv.user_data.name || xserv.user_data);
             }
 	});
         
         xserv.bind('milano', 'all');
         // xserv.bind('test', 'all');
         // xserv.bind('test', 'pippo');
+        // xserv.unbind('test');
         // xserv.unbind('test', 'pippo');
-        // xserv.unbind('test2');
-        // xserv.historyById('test', 'all', 1, 5);
+        // xserv.unbind('test', 'pippo');
+        // xserv.historyById('test', 'all', 18, 5);
         // xserv.historyById('test', 'all', 1, 2000);
         // xserv.historyById('test', 'pippo', 1); // default limit 100
         

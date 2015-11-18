@@ -52,6 +52,7 @@
 			    }
 			    var ev = {app_id: arr[1],
 				      rc: parseInt(arr[2], 10),
+				      op: arr[3],
 				      name: stringifyOpCode(arr[3]),
 				      topic: arr[4],
 				      event: arr[5],
@@ -145,7 +146,7 @@
 					new_json.arg1 = JSON.stringify(data_sign.data);
 					new_json.arg2 = data_sign.sign;
 					
-					this.user_data = data_sign.data;
+					add_user_data.bind(this)(data_sign.data);
 				    }
 				} catch(e) {}
 				
@@ -158,6 +159,13 @@
 		    this.conn.send(JSON.stringify(json));
 		}
 	    }
+	};
+	
+	var add_user_data = function(data) {
+	    try {
+		data = JSON.parse(data);
+	    } catch(e) {}
+	    this.user_data = data;
 	};
 	
 	// privato
