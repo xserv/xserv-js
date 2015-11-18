@@ -29,7 +29,7 @@
         });
         
         $("#presence").click(function() {
-           // xserv.presence('@milano', 'metro');
+           // xserv.presence('@milano', 'all');
            xserv.presence('@milano');
         });
         
@@ -70,9 +70,7 @@
         // xserv.historyById('test', 'pippo', 1); // default limit 100
         // xserv.presence('milano', 'all');
         
-        if (!xserv.isConnected()) {
-           xserv.connect();
-        }
+        xserv.connect();
     });
   </script>
 </html>

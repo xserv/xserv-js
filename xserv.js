@@ -43,16 +43,15 @@
 		    if (event.data.charAt(0) == OP_SEP) {
 			var arr = event.data.split(OP_SEP);
 			if (arr.length >= 8) {
-			    var data = arr[6]; // base64
-			    if (data.length > 0) {
-				data = Base64.decode(data); // decode
+			    var data = arr[6] || null; // base64
+			    if (data) {
 				try {
+				    data = Base64.decode(data); // decode
 				    data = JSON.parse(data);
 				} catch(e) {}
 			    }
-			    var ev = {app_id: arr[1],
-				      rc: parseInt(arr[2], 10),
-				      op: arr[3],
+			    var ev = {rc: parseInt(arr[2], 10),
+				      op: parseInt(arr[3], 10),
 				      name: stringifyOpCode(arr[3]),
 				      topic: arr[4],
 				      event: arr[5],
