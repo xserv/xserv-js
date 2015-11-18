@@ -9,6 +9,7 @@
   
   <body>
     <input type="text" id="user"> <input type="text" id="pass"> <button id="private">Bind private channel</button>
+    <pre id="info"></pre>
     <div class="box">
       <span>Connection status</span>
       <span>
@@ -45,6 +46,10 @@
         xserv.addEventListener('events:op', function(data) {
             var html = "<div id='blah' class='row'>OP " + JSON.stringify(data) + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
+            
+            if (data.name == 'bind' && data.rc == 1 && data.topic.charAt(0) == '@' && xserv.user_data) {
+                $("#info").text(xserv.user_data);
+            }
 	});
         
         xserv.bind('milano', 'all');

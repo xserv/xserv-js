@@ -14,6 +14,9 @@
 	this.reconnectInterval = DEFAULT_RI;
 	this.autoreconnect = false;
 	
+	// possibili info arrivate da bind su canale privato
+	this.user_data = null;
+	
 	// singleton start
 	if (arguments.callee._singletonInstance) {
 	    return arguments.callee._singletonInstance;
@@ -141,6 +144,8 @@
 					// double quote json di user_data
 					new_json.arg1 = JSON.stringify(data_sign.data);
 					new_json.arg2 = data_sign.sign;
+					
+					this.user_data = data_sign.data;
 				    }
 				} catch(e) {}
 				
