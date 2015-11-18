@@ -53,10 +53,6 @@
         xserv.addEventListener('events:op', function(data) {
             var html = "<div id='blah' class='row'>OP " + JSON.stringify(data) + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
-            
-            if (data.op == Xserv.BIND && data.rc == Xserv.RC_DONE && data.topic.charAt(0) == '@' && xserv.user_data) {
-                $("#info").text(xserv.user_data.name || xserv.user_data);
-            }
 	});
         
         xserv.bind('milano', 'all');
