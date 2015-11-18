@@ -202,9 +202,9 @@
 	    event = event || '';
 	    
 	    add_op.bind(this)({app_id: this.app_id, 
-			       op: Xserv.UNBIND, 
-			       topic: topic, 
-			       event: event});
+			op: Xserv.UNBIND, 
+			topic: topic, 
+			event: event});
 	};
 	
 	this.historyById = function(topic, event, value, limit) {
@@ -226,12 +226,22 @@
 			       arg2: String(value), 
 			       arg3: String(limit)});
 	};
+	
+	this.presence = function(topic, event) {
+	    event = event || '';
+	    
+	    add_op.bind(this)({app_id: this.app_id,
+			op: Xserv.PRESENCE, 
+			topic: topic, 
+			event: event});
+	};
     };
     
     // events:op op
     Xserv.BIND = 100;
     Xserv.UNBIND = 101;
     Xserv.HISTORY = 102;
+    Xserv.PRESENCE = 103;
     
     // in uso in history
     Xserv.HISTORY_ID = 'id';

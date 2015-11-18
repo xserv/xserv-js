@@ -10,6 +10,7 @@
   <body>
     <input type="text" id="user"> <input type="text" id="pass"> <button id="private">Bind private channel</button>
     <pre id="info"></pre>
+    <button id="presence">Presence</button>
     <div class="box">
       <span>Connection status</span>
       <span>
@@ -24,6 +25,10 @@
     $(document).ready(function() {
         $("#private").click(function() {
            xserv.bind('@milano', 'all', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
+        });
+        
+        $("#presence").click(function() {
+           xserv.presence('@milano', 'all');
         });
         
 	var xserv = new Xserv('qLxFC-1'); // app_id
@@ -58,9 +63,10 @@
         // xserv.unbind('test');
         // xserv.unbind('test', 'pippo');
         // xserv.unbind('test', 'pippo');
-        // xserv.historyById('test', 'all', 18, 5);
+        xserv.historyById('test', 'all', 18, 5);
         // xserv.historyById('test', 'all', 1, 2000);
         // xserv.historyById('test', 'pippo', 1); // default limit 100
+        // xserv.presence('milano', 'all');
         
         if (!xserv.isConnected()) {
            xserv.connect();
