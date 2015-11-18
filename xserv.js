@@ -49,7 +49,7 @@
 			    }
 			    var ev = {rc: parseInt(arr[1], 10),
 				      op: parseInt(arr[2], 10),
-				      name: stringifyOpCode(arr[2]),
+				      name: stringify_op(arr[2]),
 				      topic: arr[3],
 				      event: arr[4],
 				      data: data,
@@ -167,7 +167,7 @@
 	};
 	
 	// privato
-	var stringifyOpCode = function(code) {
+	var stringify_op = function(code) {
 	    if (code == Xserv.BIND) {
 		return 'bind';
 	    } else if (code == Xserv.UNBIND) {
