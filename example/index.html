@@ -25,10 +25,12 @@
     $(document).ready(function() {
         $("#private").click(function() {
            xserv.bind('@milano', 'all', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
+           xserv.bind('@milano', 'metro', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
         });
         
         $("#presence").click(function() {
-           xserv.presence('@milano', 'all');
+           // xserv.presence('@milano', 'metro');
+           xserv.presence('@milano');
         });
         
 	var xserv = new Xserv('qLxFC-1'); // app_id
