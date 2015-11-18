@@ -65,14 +65,17 @@
 	    }
 	};
 	
+	this.isConnected = function() {
+	    return this.conn && this.conn.readyState == WebSocket.OPEN;
+	};
+	
 	this.connect = function() {
 	    this.autoreconnect = true;
 	    
-	    if (window.MozWebSocket) {
-		window.WebSocket = window.MozWebSocket;
-	    }
-	    
-	    if (!this.conn || this.conn.readyState != WebSocket.OPEN) {
+	    if (!this.isConnected()) {
+		if (window.MozWebSocket) {
+		    window.WebSocket = window.MozWebSocket;
+		}
 		this.conn = new WebSocket(URL);
 		
 		for (var i in this.listeners) {
@@ -96,12 +99,14 @@
 	};
 	
 	this.disconnect = function() {
-	    if (this.conn && this.conn.readyState <= WebSocket.OPEN) {
-		this.autoreconnect = false;
+	    this.autoreconnect = false;
+	    
+	    if (this.isConnected()) {
 		this.conn.close();
-		this.listeners = [];
-		this.ops = [];
 	    }
+	    
+	    this.listeners = [];
+	    this.ops = [];
 	};
 	
 	this.setReconnectInterval = function(value) {
@@ -110,7 +115,7 @@
 	
 	// privato
 	var send =  function(json) {
-	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
+	    if (this.isConnected()) {
 		if (json.op == Xserv.BIND && json.topic.charAt(0) == '@') {
 		    if (json.auth_endpoint) {
 			var auth_url = json.auth_endpoint.endpoint;
@@ -125,17 +130,17 @@
 			};
 			
 			$.ajaxSetup({cache: false});
-			$.post(auth_url, params).always(function(data) {
+			$.post(auth_url, params).always(function(response) {
 				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
 				delete new_json.auth_endpoint;
 				
 				try {
-				    var user_data = JSON.parse(data);
-				    if (user_data) {
+				    var data_sign = JSON.parse(response);
+				    if (data_sign) {
 					// double quote json di user_data
-					new_json.arg1 = JSON.stringify(user_data.data);
-					new_json.arg2 = user_data.sign;
+					new_json.arg1 = JSON.stringify(data_sign.data);
+					new_json.arg2 = data_sign.sign;
 				    }
 				} catch(e) {}
 				
@@ -152,7 +157,7 @@
 	
 	// privato
 	var add_op =  function(json) {
-	    if (this.conn && this.conn.readyState == WebSocket.OPEN) {
+	    if (this.isConnected()) {
 		// console.log('exec diretta');
 		send.bind(this)(json);
 	    } else {

@@ -8,6 +8,7 @@
   </head>
   
   <body>
+    <input type="text" id="user"> <input type="text" id="pass"> <button id="connect">Connect</button>
     <div class="box">
       <span>Connection status</span>
       <span>
@@ -20,7 +21,22 @@
   </body>
   <script>
     $(document).ready(function() {
-	
+        $("#connect").click(function() {
+           xserv.bind('@milano', 'all', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
+           xserv.bind('milano', 'all');
+           // xserv.bind('test', 'all');
+           // xserv.bind('test', 'pippo');
+           // xserv.unbind('test', 'pippo');
+           // xserv.unbind('test2');
+           // xserv.historyById('test', 'all', 1, 5);
+           // xserv.historyById('test', 'all', 1, 2000);
+           // xserv.historyById('test', 'pippo', 1); // default limit 100
+           
+           if (!xserv.isConnected()) {
+              xserv.connect();
+           }
+        });
+        
 	var xserv = new Xserv('qLxFC-1'); // app_id
 	// xserv.setReconnectInterval(20000);
 	
@@ -33,27 +49,15 @@
 	    $('#state').attr('fill', 'red');
 	});
 	
-	xserv.addEventListener('events', function(event) {
-            var html = "<div id='blah' class='row'>EVENTS " + JSON.stringify(event) + "</div>";
+	xserv.addEventListener('events', function(data) {
+            var html = "<div id='blah' class='row'>EVENTS " + JSON.stringify(data) + "</div>";
             $(html).hide().appendTo('#output').fadeIn(1000);
         });
         
-        xserv.addEventListener('events:op', function(event_op) {
-            var html = "<div id='blah' class='row'>OP " + JSON.stringify(event_op) + "</div>";
+        xserv.addEventListener('events:op', function(data) {
+            var html = "<div id='blah' class='row'>OP " + JSON.stringify(data) + "</div>";
 	    $(html).hide().appendTo('#output').fadeIn(1000);
 	});
-	
-        xserv.bind('milano', 'all');
-        xserv.bind('@milano', 'all', {endpoint:'http://localhost:4321/auth_user', user:'amatig', pass:'pippo'});
-        // xserv.bind('test', 'all');
-        // xserv.bind('test', 'pippo');
-        // xserv.unbind('test', 'pippo');
-        // xserv.unbind('test2');
-        // xserv.historyById('test', 'all', 1, 5);
-        // xserv.historyById('test', 'all', 1, 2000);
-        // xserv.historyById('test', 'pippo', 1); // default limit 100
-        
-        xserv.connect();
     });
   </script>
 </html>
