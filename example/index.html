@@ -59,13 +59,14 @@
             }
 	});
         
-        xserv.bind('milano', ['all', 'xxx']);
-        xserv.bind(['test', 'roma', 'cacca'], 'ttt');
+        // xserv.bind('milano', ['all', 'xxx']);
+        // xserv.bind(['test', 'roma', 'cacca'], 'ttt');
+        xserv.bind(['test', 'roma', 'cacca'], ['all', 'ttt']);
         // xserv.bind('test', 'pippo');
-        // xserv.unbind('test');
+        // xserv.unbind('roma', ['all', 'ttt']);
         // xserv.unbind('test', 'pippo');
         // xserv.unbind('test', 'pippo');
-        xserv.historyById('test', 'all', 0, 5);
+        // xserv.historyById('test', 'all', 0, 5);
         // xserv.historyById('test', 'all', 1, 2000);
         // xserv.historyById('test', 'pippo', 1); // default limit 100
         // xserv.presence('milano', 'all');

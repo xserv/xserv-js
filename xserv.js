@@ -195,19 +195,19 @@
 	};
 	
 	this.bind = function(topic, event, auth_endpoint) {
-	    if (is_string(topic) && is_string(event)) {
-		add_op.bind(this)({app_id: this.app_id, 
-				   op: Xserv.BIND, 
-				   topic: topic, 
-				   event: event,
-				   auth_endpoint: auth_endpoint});
-	    } else if (is_array(topic) && is_string(event)) {
-		for (var t in topic) {
-		    this.bind(topic[t], event, auth_endpoint);
-		}
-	    } else if (is_string(topic) && is_array(event)) {
+	    if (!is_array(topic)) {
+		topic = [topic];
+	    }
+	    if (!is_array(event)) {
+		event = [event];
+	    }
+	    for (var t in topic) {
 		for (var e in event) {
-		    this.bind(topic, event[e], auth_endpoint);
+		    add_op.bind(this)({app_id: this.app_id, 
+				       op: Xserv.BIND, 
+				       topic: topic[t], 
+				       event: event[e],
+				       auth_endpoint: auth_endpoint});
 		}
 	    }
 	};
@@ -215,10 +215,20 @@
 	this.unbind = function(topic, event) {
 	    event = event || '';
 	    
-	    add_op.bind(this)({app_id: this.app_id, 
-			op: Xserv.UNBIND, 
-			topic: topic, 
-			event: event});
+	    if (!is_array(topic)) {
+		topic = [topic];
+	    }
+	    if (!is_array(event)) {
+		event = [event];
+	    }
+	    for (var t in topic) {
+		for (var e in event) {
+		    add_op.bind(this)({app_id: this.app_id, 
+				       op: Xserv.UNBIND, 
+				       topic: topic[t], 
+				       event: event[e]});
+		}
+	    }
 	};
 	
 	this.historyById = function(topic, event, value, limit) {
