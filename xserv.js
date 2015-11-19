@@ -20,6 +20,19 @@
 	arguments.callee._singletonInstance = this;
 	// end
 	
+	this.reNew = function(app_id) {
+	    this.disconnect();
+	    
+	    this.app_id = app_id;
+	    this.conn = null;
+	    this.listeners = [];
+	    this.ops = [];
+	    this.reconnectInterval = DEFAULT_RI;
+	    this.autoreconnect = false;
+	    
+	    this.user_data = {};
+	};
+	
 	this.addEventListener = function(name, callback) {
 	    if (name == 'message') {
 		
@@ -108,12 +121,6 @@
 	    if (this.isConnected()) {
 		this.conn.close();
 	    }
-	};
-	
-	this.destroy = function() {
-	    this.disconnect();
-	    this.listeners = [];
-	    this.ops = [];
 	};
 	
 	this.setReconnectInterval = function(value) {
