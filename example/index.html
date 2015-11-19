@@ -39,7 +39,9 @@
         });
         
         $("#private").click(function() {
-           xserv.bind($("#topic").val(), $("#event").val(), {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
+           xserv.bind($("#topic").val(), $("#event").val(),
+             {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()}
+           );
         });
         
         $("#presence").click(function() {
