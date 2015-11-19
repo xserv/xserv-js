@@ -142,7 +142,7 @@
 			$.post(auth_url, params).always(function(response) {
 				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
-				delete new_json.auth_endpoint;
+				// delete new_json.auth_endpoint;
 				
 				try {
 				    var data_sign = JSON.parse(response);
@@ -162,6 +162,14 @@
 		    this.conn.send(JSON.stringify(json));
 		}
 	    }
+	};
+	
+	var is_string = function(value) {
+	    return typeof value === 'string';
+	};
+	
+	var is_array = function(value) {
+	    return Object.prototype.toString.call(value) === '[object Array]';
 	};
 	
 	// privato
@@ -187,11 +195,21 @@
 	};
 	
 	this.bind = function(topic, event, auth_endpoint) {
-	    add_op.bind(this)({app_id: this.app_id, 
-			       op: Xserv.BIND, 
-			       topic: topic, 
-			       event: event,
-			       auth_endpoint: auth_endpoint});
+	    if (is_string(topic) && is_string(event)) {
+		add_op.bind(this)({app_id: this.app_id, 
+				   op: Xserv.BIND, 
+				   topic: topic, 
+				   event: event,
+				   auth_endpoint: auth_endpoint});
+	    } else if (is_array(topic) && is_string(event)) {
+		for (var t in topic) {
+		    this.bind(topic[t], event, auth_endpoint);
+		}
+	    } else if (is_string(topic) && is_array(event)) {
+		for (var e in event) {
+		    this.bind(topic, event[e], auth_endpoint);
+		}
+	    }
 	};
 	
 	this.unbind = function(topic, event) {

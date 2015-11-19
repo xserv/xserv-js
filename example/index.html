@@ -24,7 +24,7 @@
   <script>
     $(document).ready(function() {
         $("#private").click(function() {
-           xserv.bind('@milano', 'all', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
+           xserv.bind(['@milano', 'roma'], 'all', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
            xserv.bind('@milano', 'metro', {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()});
         });
         
@@ -59,8 +59,8 @@
             }
 	});
         
-        xserv.bind('milano', 'all');
-        // xserv.bind('test', 'all');
+        xserv.bind('milano', ['all', 'xxx']);
+        xserv.bind(['test', 'roma', 'cacca'], 'ttt');
         // xserv.bind('test', 'pippo');
         // xserv.unbind('test');
         // xserv.unbind('test', 'pippo');
