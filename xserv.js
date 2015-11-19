@@ -191,6 +191,8 @@
 		return 'unbind';
 	    } else if (code == Xserv.HISTORY) {
 		return 'history';
+	    } else if (code == Xserv.PRESENCE) {
+		return 'presence';
 	    }
 	};
 	
