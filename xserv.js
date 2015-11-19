@@ -108,7 +108,10 @@
 	    if (this.isConnected()) {
 		this.conn.close();
 	    }
-	    
+	};
+	
+	this.destroy = function() {
+	    this.disconnect();
 	    this.listeners = [];
 	    this.ops = [];
 	};

@@ -11,7 +11,7 @@
     <p><input type="text" id="topic" placeholder="Topic"> <input type="text" id="event" placeholder="Event"></p>
     <p><input type="text" id="user" placeholder="User"> <input type="text" id="pass" placeholder="Pass"> <button id="private">Bind Private</button></p>
     <p><button id="bind">Bind</button> <button id="unbind">Unbind</button> <button id="presence">Presence</button> <button id="history">History</button>
-      --- <button id="clear">Clear</button><p>
+      --- <button id="connect">Connect</button> <button id="disconnect">Disconnect</button> <button id="clear">Clear</button><p>
     <pre id="info" class="row"></pre>
     <div class="box">
       <p>Connection status</p>
@@ -26,6 +26,12 @@
   
   <script>
     $(document).ready(function() {
+        $("#connect").click(function() {
+           xserv.connect();
+        });
+        $("#disconnect").click(function() {
+           xserv.disconnect();
+        });
         $("#clear").click(function() {
            $('#output').html("");
         });
@@ -33,21 +39,17 @@
         $("#bind").click(function() {
            xserv.bind($("#topic").val(), $("#event").val());
         });
-        
         $("#unbind").click(function() {
            xserv.unbind($("#topic").val(), $("#event").val());
         });
-        
         $("#private").click(function() {
            xserv.bind($("#topic").val(), $("#event").val(),
              {endpoint:'http://localhost:4321/auth_user', user:$("#user").val(), pass:$("#pass").val()}
            );
         });
-        
         $("#presence").click(function() {
            xserv.presence($("#topic").val(), $("#event").val());
         });
-        
         $("#history").click(function() {
            xserv.historyById($("#topic").val(), $("#event").val(), 0, 5);
         });
@@ -77,6 +79,7 @@
             }
 	});
         
+        xserv.bind(['milano', 'roma'], 'all');
         xserv.connect();
     });
   </script>
