@@ -13,6 +13,7 @@
     <p><button id="bind">Bind</button> <button id="unbind">Unbind</button> <button id="presence">Presence</button> <button id="history">History</button>
       --- <button id="connect">Connect</button> <button id="disconnect">Disconnect</button> <button id="clear">Clear</button><p>
     <pre id="info" class="row"></pre>
+    <p><input type="text" id="message" placeholder="Message"> <button id="trigger">Trigger</button></p>
     <div class="box">
       <p>Connection status</p>
       <span>
@@ -36,6 +37,9 @@
            $('#output').html("");
         });
         
+        $("#trigger").click(function() {
+           xserv.trigger($("#topic").val(), $("#event").val(), $("#message").val());
+        });
         $("#bind").click(function() {
            xserv.bind($("#topic").val(), $("#event").val());
         });

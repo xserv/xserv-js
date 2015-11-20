@@ -215,13 +215,13 @@
 	    }
 	};
 	
-	this.trigger = function(topic, event, json) {
+	this.trigger = function(topic, event, message) {
 	    if (this.is_finish_ops) {
 		send.bind(this)({app_id: this.app_id, 
 				 op: Xserv.TRIGGER, 
 				 topic: topic, 
 				 event: event,
-				 arg1: json});
+				 arg1: message});
 	    }
 	};
 	
