@@ -36,53 +36,8 @@
 	    this.user_data = {};
 	};
 	
-	this.addEventListener = function(name, callback) {
-	    if (name == 'message') {
-		
-	    } else if (name == 'events') {
-		var event_callback = function(event) {
-		    // intercetta solo i messaggi, eventi da http
-		    if (event.data.charAt(0) != OP_SEP) {
-			var ev = JSON.parse(event.data);
-			callback(ev);
-		    }
-		}.bind(this);
-		
-		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'events:op') {
-		var event_callback = function(event) {
-		    // intercetta solo gli op_response, eventi su comandi
-		    if (event.data.charAt(0) == OP_SEP) {
-			var arr = event.data.split(OP_SEP);
-			if (arr.length >= 7) {
-			    var data = arr[5] || null; // base64
-			    if (data) {
-				try {
-				    data = Base64.decode(data); // decode
-				    data = JSON.parse(data);
-				} catch(e) {}
-			    }
-			    var ev = {rc: parseInt(arr[1], 10),
-				      op: parseInt(arr[2], 10),
-				      name: stringify_op(arr[2]),
-				      topic: arr[3],
-				      event: arr[4],
-				      data: data,
-				      descr: arr[6]};
-			    
-			    // bind privata ok
-			    if (ev.op == Xserv.BIND && Xserv.isPrivateTopic(ev.topic) && ev.rc == Xserv.RC_DONE) {
-				add_user_data.bind(this)(ev.data);
-			    }
-			    callback(ev);
-			}
-		    }
-		}.bind(this);
-		
-		this.listeners.push({event: 'message', callback: event_callback});
-	    } else {
-		this.listeners.push({event: name, callback: callback});
-	    }
+	this.setReconnectInterval = function(value) {
+	    this.reconnectInterval = value;
 	};
 	
 	this.isConnected = function() {
@@ -132,15 +87,6 @@
 	    }
 	};
 	
-	this.setReconnectInterval = function(value) {
-	    this.reconnectInterval = value;
-	};
-	
-	// privato
-	var add_user_data = function(data) {
-	    this.user_data = data;
-	};
-	
 	// privato
 	var send = function(json) {
 	    if (this.isConnected()) {
@@ -183,15 +129,6 @@
 	    }
 	};
 	
-	var is_string = function(value) {
-	    return typeof value === 'string';
-	};
-	
-	var is_array = function(value) {
-	    return Object.prototype.toString.call(value) === '[object Array]';
-	};
-	
-	// privato
 	var add_op = function(json) {
 	    // salva tutte op da ripetere su riconnessione
 	    if (json.op == Xserv.BIND || json.op == Xserv.UNBIND) {
@@ -203,7 +140,18 @@
 	    }
 	};
 	
-	// privato
+	var is_string = function(value) {
+	    return typeof value === 'string';
+	};
+	
+	var is_array = function(value) {
+	    return Object.prototype.toString.call(value) === '[object Array]';
+	};
+	
+	var add_user_data = function(data) {
+	    this.user_data = data;
+	};
+	
 	var stringify_op = function(code) {
 	    if (code == Xserv.BIND) {
 		return 'bind';
@@ -213,6 +161,55 @@
 		return 'history';
 	    } else if (code == Xserv.PRESENCE) {
 		return 'presence';
+	    }
+	};
+	
+	this.addEventListener = function(name, callback) {
+	    if (name == 'message') {
+		
+	    } else if (name == 'events') {
+		var event_callback = function(event) {
+		    // intercetta solo i messaggi, eventi da http
+		    if (event.data.charAt(0) != OP_SEP) {
+			var ev = JSON.parse(event.data);
+			callback(ev);
+		    }
+		}.bind(this);
+		
+		this.listeners.push({event: 'message', callback: event_callback});
+	    } else if (name == 'events:op') {
+		var event_callback = function(event) {
+		    // intercetta solo gli op_response, eventi su comandi
+		    if (event.data.charAt(0) == OP_SEP) {
+			var arr = event.data.split(OP_SEP);
+			if (arr.length >= 7) {
+			    var data = arr[5] || null; // base64
+			    if (data) {
+				try {
+				    data = Base64.decode(data); // decode
+				    data = JSON.parse(data);
+				} catch(e) {}
+			    }
+			    var ev = {rc: parseInt(arr[1], 10),
+				      op: parseInt(arr[2], 10),
+				      name: stringify_op(arr[2]),
+				      topic: arr[3],
+				      event: arr[4],
+				      data: data,
+				      descr: arr[6]};
+			    
+			    // bind privata ok
+			    if (ev.op == Xserv.BIND && Xserv.isPrivateTopic(ev.topic) && ev.rc == Xserv.RC_DONE) {
+				add_user_data.bind(this)(ev.data);
+			    }
+			    callback(ev);
+			}
+		    }
+		}.bind(this);
+		
+		this.listeners.push({event: 'message', callback: event_callback});
+	    } else {
+		this.listeners.push({event: name, callback: callback});
 	    }
 	};
 	
