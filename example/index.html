@@ -27,10 +27,9 @@
     <pre id="output_op"></pre>
     Message
     <pre id="output"></pre>
-  </body>
-  
-  <script>
-    $(document).ready(function() {
+    
+    <script>
+      $(document).ready(function() {
         $("#connect").click(function() {
            xserv.connect();
         });
@@ -91,6 +90,7 @@
         
         xserv.bind(['milano', 'roma'], 'all');
         xserv.connect();
-    });
-  </script>
+      });
+    </script>
+  </body>
 </html>
