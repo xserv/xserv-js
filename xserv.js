@@ -1,5 +1,6 @@
 (function() {    
     var Xserv = function(app_id) {
+	var AUTH_URL = 'http://localhost:4321/auth_user';
 	var URL = 'ws://localhost:4321/ws';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
@@ -145,7 +146,7 @@
 	    if (this.isConnected()) {
 		if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic)) {
 		    if (json.auth_endpoint) {
-			var auth_url = json.auth_endpoint.endpoint;
+			var auth_url = json.auth_endpoint.endpoint || AUTH_URL;
 			var auth_user = json.auth_endpoint.user;
 			var auth_pass = json.auth_endpoint.pass;
 			
