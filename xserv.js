@@ -192,7 +192,10 @@
 	
 	// privato
 	var add_op = function(json) {
-	    this.ops.push(json);
+	    // salva tutte op da ripetere su riconnessione
+	    if (json.op == Xserv.BIND || json.op == Xserv.UNBIND) {
+		this.ops.push(json);
+	    }
 	    
 	    if (this.isConnected() && this.is_finish_ops) {
 		send.bind(this)(json);
