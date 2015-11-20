@@ -135,7 +135,7 @@
 		this.ops.push(json);
 	    }
 	    
-	    if (this.isConnected() && this.is_finish_ops) {
+	    if (this.is_finish_ops) {
 		send.bind(this)(json);
 	    }
 	};
@@ -148,8 +148,8 @@
 	    return Object.prototype.toString.call(value) === '[object Array]';
 	};
 	
-	var add_user_data = function(data) {
-	    this.user_data = data;
+	var add_user_data = function(json) {
+	    this.user_data = json;
 	};
 	
 	var stringify_op = function(code) {
@@ -161,6 +161,8 @@
 		return 'history';
 	    } else if (code == Xserv.PRESENCE) {
 		return 'presence';
+	    } else if (code == Xserv.TRIGGER) {
+		return 'trigger';
 	    }
 	};
 	
@@ -210,6 +212,16 @@
 		this.listeners.push({event: 'message', callback: event_callback});
 	    } else {
 		this.listeners.push({event: name, callback: callback});
+	    }
+	};
+	
+	this.trigger = function(topic, event, json) {
+	    if (this.is_finish_ops) {
+		send.bind(this)({app_id: this.app_id, 
+				 op: Xserv.TRIGGER, 
+				 topic: topic, 
+				 event: event,
+				 arg1: json});
 	    }
 	};
 	
@@ -285,6 +297,7 @@
     };
     
     // events:op op
+    Xserv.TRIGGER = 99;
     Xserv.BIND = 100;
     Xserv.UNBIND = 101;
     Xserv.HISTORY = 102;
