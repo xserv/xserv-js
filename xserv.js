@@ -6,6 +6,7 @@
 	
 	this.app_id = app_id;
 	this.conn = null;
+	this.is_finish_ops = false;
 	this.listeners = [];
 	this.ops = [];
 	this.reconnectInterval = DEFAULT_RI;
@@ -25,6 +26,7 @@
 	    
 	    this.app_id = app_id;
 	    this.conn = null;
+	    this.is_finish_ops = false;
 	    this.listeners = [];
 	    this.ops = [];
 	    this.reconnectInterval = DEFAULT_RI;
@@ -93,6 +95,8 @@
 		if (window.MozWebSocket) {
 		    window.WebSocket = window.MozWebSocket;
 		}
+		// non esiste un reopen quindi va reinizializzato tutto e si deve gestire una
+		// lista anche degli addEventListener sulla socket
 		this.conn = new WebSocket(URL);
 		
 		for (var i in this.listeners) {
@@ -105,9 +109,13 @@
 		    for (var j in this.ops) {
 			send.bind(this)(this.ops[j]);
 		    }
+		    
+		    this.is_finish_ops = true;
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
+		    this.is_finish_ops = false;
+		    
 		    if (this.autoreconnect) {
 			setTimeout(this.connect.bind(this), this.reconnectInterval);
 		    }
@@ -184,12 +192,10 @@
 	
 	// privato
 	var add_op = function(json) {
-	    if (this.isConnected()) {
-		// console.log('exec diretta');
+	    this.ops.push(json);
+	    
+	    if (this.isConnected() && this.is_finish_ops) {
 		send.bind(this)(json);
-	    } else {
-		// console.log('exec indiretta');
-		this.ops.push(json);
 	    }
 	};
 	
@@ -264,8 +270,6 @@
 	};
 	
 	this.presence = function(topic, event) {
-	    event = event || '';
-	    
 	    add_op.bind(this)({app_id: this.app_id,
 			op: Xserv.PRESENCE, 
 			topic: topic, 
