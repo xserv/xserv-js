@@ -8,12 +8,6 @@
   </head>
   
   <body>
-    <p><input type="text" id="topic" placeholder="Topic"> <input type="text" id="event" placeholder="Event"></p>
-    <p><input type="text" id="user" placeholder="User"> <input type="text" id="pass" placeholder="Pass"> <button id="private">Bind Private</button></p>
-    <p><button id="bind">Bind</button> <button id="unbind">Unbind</button> <button id="presence">Presence</button> <button id="history">History</button>
-      --- <button id="connect">Connect</button> <button id="disconnect">Disconnect</button> <button id="clear">Clear</button><p>
-    <pre id="info" class="row"></pre>
-    <p><input type="text" id="message" placeholder="Message"> <button id="trigger">Trigger</button></p>
     <div class="box">
       <p>Connection status</p>
       <span>
@@ -21,7 +15,17 @@
 	  <circle id="state" cx="10" cy="10" r="10" fill="red" />
 	</svg>
       </span>
-    </div>
+    </div> <button id="connect">Connect</button> <button id="disconnect">Disconnect</button> <button id="clear">Clear</button><p>
+    <p><input type="text" id="topic" placeholder="Topic"> <input type="text" id="event" placeholder="Event"> 
+      <input type="text" id="user" placeholder="User"> <input type="text" id="pass" placeholder="Pass"></p>
+    <p><button id="bind">Bind</button> <button id="private">Bind Private</button> <button id="unbind">Unbind</button> 
+      <button id="presence">Presence</button> <button id="history">History</button></p>
+    <pre id="info"></pre>
+    <p><input type="text" id="message" placeholder="Message"> <button id="trigger">Trigger</button></p>
+    <br>
+    Operation result
+    <pre id="output_op"></pre>
+    Message
     <pre id="output"></pre>
   </body>
   
@@ -34,6 +38,7 @@
            xserv.disconnect();
         });
         $("#clear").click(function() {
+           $('#output_op').html("");
            $('#output').html("");
         });
         
@@ -71,13 +76,13 @@
 	});
 	
 	xserv.addEventListener('events', function(data) {
-            var html = "<div id='blah' class='row'>EVENTS " + JSON.stringify(data) + "</div>";
-            $(html).hide().appendTo('#output').fadeIn(1000);
+            var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
+            $(html).hide().prependTo('#output').fadeIn(1000);
         });
         
         xserv.addEventListener('events:op', function(data) {
-            var html = "<div id='blah' class='row'>OP " + JSON.stringify(data) + "</div>";
-	    $(html).hide().appendTo('#output').fadeIn(1000);
+            var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
+	    $(html).hide().prependTo('#output_op').fadeIn(1000);
             
             if (data.op == Xserv.BIND && data.rc == Xserv.RC_DONE && Xserv.isPrivateTopic(data.topic)) {
                $("#info").text(JSON.stringify(xserv.user_data));

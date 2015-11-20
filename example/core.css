@@ -1,20 +1,8 @@
 body
 {
-    font-family: Arial;
-    font-size: 0.95em;
-}
-
-pre
-{
-    font-size: 1em;
-}
-
-.row
-{
-    margin-bottom: 4px;
     padding: 8px;
-    border: #eee solid 1px;
-    word-wrap: break-word;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.95em;
 }
 
 .box {
@@ -26,4 +14,28 @@ pre
     display: table-cell;
     vertical-align: middle;
     padding-left: 8px;
+}
+
+#output
+{
+    border: #eee solid 1px;
+    padding: 4px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+#output_op
+{
+    border: #eee solid 1px;
+    padding: 4px;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+.row
+{
+    margin-bottom: 4px;
+    padding: 8px;
+    border: #eee solid 1px;
+    word-wrap: break-word;
 }
