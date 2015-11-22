@@ -1,7 +1,7 @@
 (function() {    
     var Xserv = function(app_id) {
-	var AUTH_URL = 'http://localhost:4321/auth_user';
 	var URL = 'ws://localhost:4321/ws';
+	var DEFAULT_AUTH_URL = 'http://localhost:4321/auth_user';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
 	
@@ -12,33 +12,7 @@
 	this.ops = [];
 	this.reconnectInterval = DEFAULT_RI;
 	this.autoreconnect = false;
-	
 	this.user_data = {};
-	
-	// singleton start
-	if (arguments.callee._singletonInstance) {
-	    return arguments.callee._singletonInstance;
-	}
-	arguments.callee._singletonInstance = this;
-	// end
-	
-	this.reNew = function(app_id) {
-	    this.disconnect();
-	    
-	    this.app_id = app_id;
-	    this.conn = null;
-	    this.is_finish_ops = false;
-	    this.listeners = [];
-	    this.ops = [];
-	    this.reconnectInterval = DEFAULT_RI;
-	    this.autoreconnect = false;
-	    
-	    this.user_data = {};
-	};
-	
-	this.setReconnectInterval = function(value) {
-	    this.reconnectInterval = value;
-	};
 	
 	this.isConnected = function() {
 	    return this.conn && this.conn.readyState == WebSocket.OPEN;
@@ -87,12 +61,16 @@
 	    }
 	};
 	
+	this.setReconnectInterval = function(value) {
+	    this.reconnectInterval = value;
+	};
+	
 	// privato
 	var send = function(json) {
 	    if (this.isConnected()) {
 		if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic)) {
 		    if (json.auth_endpoint) {
-			var auth_url = json.auth_endpoint.endpoint || AUTH_URL;
+			var auth_url = json.auth_endpoint.endpoint || DEFAULT_AUTH_URL;
 			var auth_user = json.auth_endpoint.user;
 			var auth_pass = json.auth_endpoint.pass;
 			
@@ -284,9 +262,9 @@
 	
 	this.presence = function(topic, event) {
 	    add_op.bind(this)({app_id: this.app_id,
-			op: Xserv.PRESENCE, 
-			topic: topic, 
-			event: event});
+			       op: Xserv.PRESENCE, 
+			       topic: topic, 
+			       event: event});
 	};
     };
     
