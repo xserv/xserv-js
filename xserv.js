@@ -297,11 +297,11 @@
     };
     
     // events:op op
-    Xserv.TRIGGER = 99;
-    Xserv.BIND = 100;
-    Xserv.UNBIND = 101;
-    Xserv.HISTORY = 102;
-    Xserv.PRESENCE = 103;
+    Xserv.TRIGGER = 100;
+    Xserv.BIND = 101;
+    Xserv.UNBIND = 102;
+    Xserv.HISTORY = 103;
+    Xserv.PRESENCE = 104;
     
     // in uso in history
     Xserv.HISTORY_ID = 'id';
