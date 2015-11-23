@@ -71,8 +71,8 @@
 		if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic)) {
 		    if (json.auth_endpoint) {
 			var auth_url = json.auth_endpoint.endpoint || DEFAULT_AUTH_URL;
-			var auth_user = json.auth_endpoint.user;
-			var auth_pass = json.auth_endpoint.pass;
+			var auth_user = json.auth_endpoint.user || '';
+			var auth_pass = json.auth_endpoint.pass || '';
 			
 			var params = {
 			    app_id: json.app_id,
@@ -81,9 +81,15 @@
 			    pass: auth_pass
 			};
 			
-			$.ajaxSetup({cache: false});
-			$.post(auth_url, params).always(function(response) {
-				// clone perche' non si tocca quello in lista op
+			$.ajax({cache: false,
+				    type: 'post',
+				    url: auth_url, 
+				    contentType: 'application/json; charset=UTF-8',
+				    data: JSON.stringify(params),
+				    processData: false,
+				    dataType: 'text'
+			       }).always(function(response) {
+			        // clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
 				// delete new_json.auth_endpoint;
 				
