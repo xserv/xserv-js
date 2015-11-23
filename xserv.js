@@ -179,7 +179,7 @@
 				      descr: arr[6]};
 			    
 			    // bind privata ok
-			    if (ev.op == Xserv.BIND && Xserv.isPrivateTopic(ev.topic) && ev.rc == Xserv.RC_DONE) {
+			    if (ev.op == Xserv.BIND && Xserv.isPrivateTopic(ev.topic) && ev.rc == Xserv.RC_OK) {
 				add_user_data.bind(this)(ev.data);
 			    }
 			    callback(ev);
@@ -275,19 +275,25 @@
     };
     
     // events:op op
-    Xserv.TRIGGER = 101;
-    Xserv.BIND = 200;
-    Xserv.UNBIND = 201;
-    Xserv.HISTORY = 202;
-    Xserv.PRESENCE = 203;
+    Xserv.TRIGGER = 200;
+    Xserv.BIND = 201;
+    Xserv.UNBIND = 202;
+    Xserv.HISTORY = 203;
+    Xserv.PRESENCE = 204;
     
     // in uso in history
     Xserv.HISTORY_ID = 'id';
     Xserv.HISTORY_TIMESTAMP = 'timestamp';
     
     // events:op result_code
-    Xserv.RC_FAIL = 0;
-    Xserv.RC_DONE = 1;
+    Xserv.RC_OK = 1;
+    Xserv.RC_GENERIC_ERROR = 0;
+    Xserv.RC_ARGS_ERROR = -1;
+    Xserv.RC_ALREADY_BINDED = -2;
+    Xserv.RC_UNAUTHORIZED = -3;
+    Xserv.RC_NO_EVENT = -4;
+    Xserv.RC_NO_DATA = -5;
+    Xserv.RC_NOT_PRIVATE = -6;
     
     this.Xserv = Xserv;
     

@@ -86,7 +86,7 @@
             var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
 	    $(html).hide().prependTo('#output_op').fadeIn(1000);
             
-            if (data.op == Xserv.BIND && data.rc == Xserv.RC_DONE && Xserv.isPrivateTopic(data.topic)) {
+            if (data.op == Xserv.BIND && data.rc == Xserv.RC_OK && Xserv.isPrivateTopic(data.topic)) {
                $("#info").text(JSON.stringify(xserv.user_data));
             }
 	});
