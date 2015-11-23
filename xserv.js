@@ -83,6 +83,7 @@
 			
 			$.ajax({cache: false,
 				    type: 'post',
+				    // crossDomain: true,
 				    url: auth_url, 
 				    contentType: 'application/json; charset=UTF-8',
 				    data: JSON.stringify(params),
