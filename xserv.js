@@ -98,9 +98,9 @@
 				    var data_sign = JSON.parse(response);
 				    if (data_sign) {
 					// double quote json di user_data
-					new_json.arg1 = JSON.stringify(data_sign.data);
-					new_json.arg2 = data_sign.sign;
-					new_json.arg3 = params.user
+					new_json.arg1 = params.user
+					new_json.arg2 = JSON.stringify(data_sign.data);
+					new_json.arg3 = data_sign.sign;
 				    }
 				} catch(e) {}
 				
