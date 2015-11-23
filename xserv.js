@@ -100,6 +100,7 @@
 					// double quote json di user_data
 					new_json.arg1 = JSON.stringify(data_sign.data);
 					new_json.arg2 = data_sign.sign;
+					new_json.arg3 = params.user
 				    }
 				} catch(e) {}
 				
