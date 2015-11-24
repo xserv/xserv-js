@@ -4,19 +4,21 @@
     <title>HTML5 Demo</title>
     <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="../xserv.js"></script>
-    <link rel="stylesheet" type="text/css" href="core.css">
+    <link rel="stylesheet" type="text/css" href="custom.css">
   </head>
   
   <body>
     
     <div class="box">
-      <span>Connection status</span>
       <span>
 	<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px">
 	  <circle id="state" cx="10" cy="10" r="10" fill="red" />
 	</svg>
       </span>
-      <span> --- Info user: </span><span id="info">{}</span>
+      <span>Connection status</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> 
+      <span id="info">{}</span>
+      <span>UserData</span>
     </div>
     
     <p><button id="connect">Connect</button> <button id="disconnect">Disconnect</button> <button id="clear">Clear</button></p>
