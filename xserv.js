@@ -146,6 +146,10 @@
 		return 'history';
 	    } else if (code == Xserv.PRESENCE) {
 		return 'presence';
+	    } else if (code == Xserv.PRESENCE_IN) {
+		return 'presence_in';
+	    } else if (code == Xserv.PRESENCE_OUT) {
+		return 'presence_out';
 	    } else if (code == Xserv.TRIGGER) {
 		return 'trigger';
 	    }
@@ -287,6 +291,10 @@
     Xserv.UNBIND = 202;
     Xserv.HISTORY = 203;
     Xserv.PRESENCE = 204;
+    
+    // in uso in presence
+    Xserv.PRESENCE_IN = Xserv.BIND + 200;
+    Xserv.PRESENCE_OUT = Xserv.UNBIND + 200;
     
     // in uso in history
     Xserv.HISTORY_ID = 'id';
