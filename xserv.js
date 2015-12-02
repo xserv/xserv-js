@@ -174,6 +174,7 @@
 		    if (event.data.charAt(0) == OP_SEP) {
 			var arr = event.data.split(OP_SEP);
 			if (arr.length >= 7) {
+			    // data structure json array o object
 			    var data = arr[5] || null; // base64
 			    if (data) {
 				try {
