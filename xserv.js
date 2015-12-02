@@ -1,7 +1,8 @@
 (function() {    
     var Xserv = function(app_id) {
-	var URL = 'ws://localhost:4321/ws';
-	var DEFAULT_AUTH_URL = 'http://localhost:4321/auth_user/';
+	var SERVER = 'localhost:4321';
+	var URL = 'ws://' + SERVER + '/ws';
+	var DEFAULT_AUTH_URL = 'http://' + SERVER + '/auth_user/';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
 	
