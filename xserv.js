@@ -81,16 +81,16 @@
 			    pass: auth_pass
 			};
 			
-			$.ajax({cache: false,
-				    type: 'post',
-				    // crossDomain: true,
+			$.ajax({cache: false, 
+				    type: 'post', 
 				    url: auth_url, 
 				    contentType: 'application/json; charset=UTF-8',
 				    data: JSON.stringify(params),
 				    processData: false,
 				    dataType: 'text'
-			       }).always(function(response) {
-			        // clone perche' non si tocca quello in lista op
+				    })
+			.always(function(response) {
+				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
 				// delete new_json.auth_endpoint;
 				
@@ -99,7 +99,7 @@
 				    if (data_sign) {
 					// double quote json di user_data
 					new_json.arg1 = params.user
-					new_json.arg2 = JSON.stringify(data_sign.data);
+					    new_json.arg2 = JSON.stringify(data_sign.data);
 					new_json.arg3 = data_sign.sign;
 				    }
 				} catch(e) {}
