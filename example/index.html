@@ -82,6 +82,7 @@
 	xserv.addEventListener('events', function(data) {
             var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
             $(html).hide().prependTo('#output').fadeIn(1000);
+            alert(data.message);
         });
         
         xserv.addEventListener('events:op', function(data) {
@@ -91,6 +92,7 @@
             if (data.op == Xserv.BIND && data.rc == Xserv.RC_OK && Xserv.isPrivateTopic(data.topic)) {
                $("#info").text(JSON.stringify(xserv.user_data));
             }
+            // alert(data.data);
 	});
         
         // xserv.bind(['milano', 'roma'], 'all');

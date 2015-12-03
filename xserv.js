@@ -130,6 +130,10 @@
 	    return typeof value === 'string';
 	};
 	
+	var is_object = function(value) {
+	    return typeof value === 'object';
+	};
+	
 	var is_array = function(value) {
 	    return Object.prototype.toString.call(value) === '[object Array]';
 	};
@@ -164,6 +168,9 @@
 		    // intercetta solo i messaggi, eventi da http
 		    if (event.data.charAt(0) != OP_SEP) {
 			var ev = JSON.parse(event.data);
+			try {
+			    ev.message = JSON.parse(ev.message);
+			} catch(e) {}
 			callback(ev);
 		    }
 		}.bind(this);
@@ -208,6 +215,9 @@
 	
 	this.trigger = function(topic, event, message) {
 	    if (this.is_finish_ops) {
+		if (!is_string(message) && is_object(message)) {
+		    message = JSON.stringify(message);
+		}
 		send.bind(this)({app_id: this.app_id, 
 				 op: Xserv.TRIGGER, 
 				 topic: topic, 
