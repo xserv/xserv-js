@@ -87,8 +87,7 @@
 				    contentType: 'application/json; charset=UTF-8',
 				    data: JSON.stringify(params),
 				    processData: false,
-				    dataType: 'text'
-				    })
+				    dataType: 'text'})
 			.always(function(response) {
 				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
