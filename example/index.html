@@ -82,7 +82,7 @@
 	xserv.addEventListener('events', function(data) {
             var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
             $(html).hide().prependTo('#output').fadeIn(1000);
-            alert(data.message);
+            // alert(data.message);
         });
         
         xserv.addEventListener('events:op', function(data) {
