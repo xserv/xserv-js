@@ -192,12 +192,12 @@
 			    }
 			    
 			    var json = {rc: parseInt(arr[1], 10),
-				      op: parseInt(arr[2], 10),
-				      name: stringify_op(arr[2]),
-				      topic: arr[3],
-				      event: arr[4],
-				      data: data,
-				      descr: arr[6]};
+					op: parseInt(arr[2], 10),
+					name: stringify_op(arr[2]),
+					topic: arr[3],
+					event: arr[4],
+					data: data,
+					descr: arr[6]};
 			    
 			    // bind privata ok
 			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
