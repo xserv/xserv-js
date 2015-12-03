@@ -167,11 +167,11 @@
 		var event_callback = function(event) {
 		    // intercetta solo i messaggi, eventi da http
 		    if (event.data.charAt(0) != OP_SEP) {
-			var ev = JSON.parse(event.data);
+			var json = JSON.parse(event.data);
 			try {
-			    ev.message = JSON.parse(ev.message);
+			    json.message = JSON.parse(json.message);
 			} catch(e) {}
-			callback(ev);
+			callback(json);
 		    }
 		}.bind(this);
 		
@@ -190,7 +190,8 @@
 				    data = JSON.parse(data);
 				} catch(e) {}
 			    }
-			    var ev = {rc: parseInt(arr[1], 10),
+			    
+			    var json = {rc: parseInt(arr[1], 10),
 				      op: parseInt(arr[2], 10),
 				      name: stringify_op(arr[2]),
 				      topic: arr[3],
@@ -199,10 +200,10 @@
 				      descr: arr[6]};
 			    
 			    // bind privata ok
-			    if (ev.op == Xserv.BIND && Xserv.isPrivateTopic(ev.topic) && ev.rc == Xserv.RC_OK) {
-				set_user_data.bind(this)(ev.data);
+			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				set_user_data.bind(this)(json.data);
 			    }
-			    callback(ev);
+			    callback(json);
 			}
 		    }
 		}.bind(this);
