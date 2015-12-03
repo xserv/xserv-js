@@ -79,20 +79,20 @@
 	    $('#state').attr('fill', 'red');
 	});
 	
-	xserv.addEventListener('events', function(data) {
-            var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
+	xserv.addEventListener('events', function(json) {
+            var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
             $(html).hide().prependTo('#output').fadeIn(1000);
-            // alert(data.message);
+            // alert(json.message);
         });
         
-        xserv.addEventListener('events:op', function(data) {
-            var html = "<div class='row'>" + JSON.stringify(data) + "</div>";
+        xserv.addEventListener('events:op', function(json) {
+            var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
 	    $(html).hide().prependTo('#output_op').fadeIn(1000);
             
-            if (data.op == Xserv.BIND && data.rc == Xserv.RC_OK && Xserv.isPrivateTopic(data.topic)) {
+            if (json.op == Xserv.BIND && json.rc == Xserv.RC_OK && Xserv.isPrivateTopic(json.topic)) {
                $("#info").text(JSON.stringify(xserv.user_data));
             }
-            // alert(data.data);
+            // alert(json.data);
 	});
         
         // xserv.bind(['milano', 'roma'], 'all');
