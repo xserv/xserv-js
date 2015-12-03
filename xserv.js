@@ -11,7 +11,7 @@
 	this.is_finish_ops = false;
 	this.listeners = [];
 	this.ops = [];
-	this.reconnectInterval = DEFAULT_RI;
+	this.reconnect_interval = DEFAULT_RI;
 	this.autoreconnect = false;
 	this.user_data = {};
 	
@@ -48,7 +48,7 @@
 		    this.is_finish_ops = false;
 		    
 		    if (this.autoreconnect) {
-			setTimeout(this.connect.bind(this), this.reconnectInterval);
+			setTimeout(this.connect.bind(this), this.reconnect_interval);
 		    }
 		}.bind(this);
 	    }
@@ -63,7 +63,7 @@
 	};
 	
 	this.setReconnectInterval = function(value) {
-	    this.reconnectInterval = value;
+	    this.reconnect_interval = value;
 	};
 	
 	// privato
