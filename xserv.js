@@ -138,7 +138,7 @@
 	    return Object.prototype.toString.call(value) === '[object Array]';
 	};
 	
-	var add_user_data = function(json) {
+	var set_user_data = function(json) {
 	    this.user_data = json;
 	};
 	
@@ -200,7 +200,7 @@
 			    
 			    // bind privata ok
 			    if (ev.op == Xserv.BIND && Xserv.isPrivateTopic(ev.topic) && ev.rc == Xserv.RC_OK) {
-				add_user_data.bind(this)(ev.data);
+				set_user_data.bind(this)(ev.data);
 			    }
 			    callback(ev);
 			}
