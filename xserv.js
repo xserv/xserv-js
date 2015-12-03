@@ -12,7 +12,7 @@
 	this.listeners = [];
 	this.ops = [];
 	this.reconnect_interval = DEFAULT_RI;
-	this.autoreconnect = false;
+	this.is_auto_reconnect = false;
 	this.user_data = {};
 	
 	this.isConnected = function() {
@@ -20,7 +20,7 @@
 	};
 	
 	this.connect = function() {
-	    this.autoreconnect = true;
+	    this.is_auto_reconnect = true;
 	    
 	    if (!this.isConnected()) {
 		if (window.MozWebSocket) {
@@ -47,7 +47,7 @@
 		this.conn.onclose = function(event) {
 		    this.is_finish_ops = false;
 		    
-		    if (this.autoreconnect) {
+		    if (this.is_auto_reconnect) {
 			setTimeout(this.connect.bind(this), this.reconnect_interval);
 		    }
 		}.bind(this);
@@ -55,7 +55,7 @@
 	};
 	
 	this.disconnect = function() {
-	    this.autoreconnect = false;
+	    this.is_auto_reconnect = false;
 	    
 	    if (this.isConnected()) {
 		this.conn.close();
