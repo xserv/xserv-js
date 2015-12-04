@@ -1,6 +1,6 @@
 (function() {    
     var Xserv = function(app_id) {
-	var SERVER = 'localhost:4321';
+	var SERVER = 'mobile-italia.com:4321';
 	var URL = 'ws://' + SERVER + '/ws';
 	var DEFAULT_AUTH_URL = 'http://' + SERVER + '/auth_user/';
 	var DEFAULT_RI = 5000;
