@@ -91,20 +91,17 @@
 				    contentType: 'application/json; charset=UTF-8',
 				    data: JSON.stringify(params),
 				    processData: false,
-				    dataType: 'text'})
-			.always(function(response) {
+				    dataType: 'json'})
+			.always(function(data_sign) {
 				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
 				// delete new_json.auth_endpoint;
 				
-				try {
-				    var data_sign = JSON.parse(response);
-				    if (data_sign) {
-					new_json.arg1 = params.user;
-					new_json.arg2 = data_sign.data;
-					new_json.arg3 = data_sign.sign;
-				    }
-				} catch(e) {}
+				if (data_sign) {
+				    new_json.arg1 = params.user;
+				    new_json.arg2 = data_sign.data;
+				    new_json.arg3 = data_sign.sign;
+				}
 				
 				this.conn.send(JSON.stringify(new_json));
 			    }.bind(this));
