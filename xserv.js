@@ -1,6 +1,6 @@
 (function() {    
     var Xserv = function(app_id) {
-	var SERVER = 'mobile-italia.com:4321';
+	var SERVER = 'localhost:4321';
 	var URL = 'ws://' + SERVER + '/ws';
 	var DEFAULT_AUTH_URL = 'http://' + SERVER + '/auth_user/';
 	var DEFAULT_RI = 5000;
@@ -82,6 +82,10 @@
 			};
 			
 			$.ajax({cache: false, 
+				    crossDomain: true,
+				    // xhrFields: {
+				    //     'withCredentials': true
+				    // },
 				    type: 'post', 
 				    url: auth_url, 
 				    contentType: 'application/json; charset=UTF-8',
@@ -96,9 +100,8 @@
 				try {
 				    var data_sign = JSON.parse(response);
 				    if (data_sign) {
-					// double quote json di user_data
 					new_json.arg1 = params.user;
-					new_json.arg2 = JSON.stringify(data_sign.data);
+					new_json.arg2 = data_sign.data;
 					new_json.arg3 = data_sign.sign;
 				    }
 				} catch(e) {}
