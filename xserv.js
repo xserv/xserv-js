@@ -15,6 +15,7 @@
 	this.reconnect_interval = DEFAULT_RI;
 	
 	this.is_auto_reconnect = false;
+	this.is_backup_act = true;
 	this.in_initialization = false;
 	
 	this.isConnected = function() {
@@ -70,6 +71,10 @@
 	    this.reconnect_interval = value;
 	};
 	
+	this.setBackupOps = function(value) {
+	    this.is_backup_act = value;
+	};
+	
 	// privato
 	var send = function(json) {
 	    if (this.isConnected()) {
@@ -120,7 +125,7 @@
 	
 	var add_op = function(json) {
 	    // salva tutte op da ripetere su riconnessione
-	    if (json.op == Xserv.BIND || json.op == Xserv.UNBIND) {
+	    if (this.is_backup_act && (json.op == Xserv.BIND || json.op == Xserv.UNBIND)) {
 		this.ops.push(json);
 	    }
 	    
