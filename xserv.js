@@ -1,19 +1,20 @@
-(function() {    
+(function() {
     var Xserv = function(app_id) {
-	var SERVER = 'mobile-italia.com:4321';
-	var URL = 'ws://' + SERVER + '/ws';
-	var DEFAULT_AUTH_URL = 'http://' + SERVER + '/auth_user/';
+	var SERVER = 'mobile-italia.com';
+	var PORT = ':4321';
+	var URL = 'ws://' + SERVER + PORT + '/ws';
+	var DEFAULT_AUTH_URL = 'http://' + SERVER + PORT + '/auth_user/';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
 	
 	this.app_id = app_id;
 	this.conn = null;
-	this.is_finish_ops = false;
-	this.listeners = [];
 	this.ops = [];
+	this.listeners = [];
 	this.reconnect_interval = DEFAULT_RI;
 	this.is_auto_reconnect = false;
 	this.user_data = {};
+	this.in_initialization = false;
 	
 	this.isConnected = function() {
 	    return this.conn && this.conn.readyState == WebSocket.OPEN;
@@ -22,7 +23,9 @@
 	this.connect = function() {
 	    this.is_auto_reconnect = true;
 	    
-	    if (!this.isConnected()) {
+	    if (!this.isConnected() && !this.in_initialization) {
+		this.in_initialization = true;
+		
 		if (window.MozWebSocket) {
 		    window.WebSocket = window.MozWebSocket;
 		}
@@ -41,15 +44,15 @@
 			send.bind(this)(this.ops[j]);
 		    }
 		    
-		    this.is_finish_ops = true;
+		    this.in_initialization = false;
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
-		    this.is_finish_ops = false;
-		    
 		    if (this.is_auto_reconnect) {
 			setTimeout(this.connect.bind(this), this.reconnect_interval);
 		    }
+		    
+		    this.in_initialization = false;
 		}.bind(this);
 	    }
 	};
@@ -120,9 +123,7 @@
 		this.ops.push(json);
 	    }
 	    
-	    if (this.is_finish_ops) {
-		send.bind(this)(json);
-	    }
+	    send.bind(this)(json);
 	};
 	
 	var is_string = function(value) {
@@ -214,16 +215,14 @@
 	};
 	
 	this.trigger = function(topic, event, message) {
-	    if (this.is_finish_ops) {
-		if (!is_string(message) && is_object(message)) {
-		    message = JSON.stringify(message);
-		}
-		send.bind(this)({app_id: this.app_id, 
-				 op: Xserv.TRIGGER, 
-				 topic: topic, 
-				 event: event,
-				 arg1: message});
+	    if (!is_string(message) && is_object(message)) {
+		message = JSON.stringify(message);
 	    }
+	    add_op.bind(this)({app_id: this.app_id, 
+			       op: Xserv.TRIGGER, 
+			       topic: topic, 
+			       event: event,
+			       arg1: message});
 	};
 	
 	this.bind = function(topic, event, auth_endpoint) {
