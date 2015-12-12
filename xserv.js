@@ -182,7 +182,7 @@
 		}.bind(this);
 		
 		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'events:op') {
+	    } else if (name == 'ops') {
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
 		    if (event.data.charAt(0) == OP_SEP) {

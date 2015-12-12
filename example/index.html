@@ -85,7 +85,7 @@
             // alert(json.message);
         });
         
-        xserv.addEventListener('events:op', function(json) {
+        xserv.addEventListener('ops', function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
 	    $(html).hide().prependTo('#output_op').fadeIn(1000);
             
