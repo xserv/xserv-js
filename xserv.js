@@ -268,23 +268,23 @@
 	    }
 	};
 	
-	this.historyById = function(topic, event, value, limit) {
+	this.historyById = function(topic, event, offset, limit) {
 	    add_op.bind(this)({app_id: this.app_id, 
 			       op: Xserv.HISTORY, 
 			       topic: topic, 
 			       event: event,
 			       arg1: Xserv.HISTORY_ID,
-			       arg2: String(value),
+			       arg2: String(offset),
 			       arg3: String(limit)});
 	};
 	
-	this.historyByTimestamp = function(topic, event, value, limit) {
+	this.historyByTimestamp = function(topic, event, offset, limit) {
 	    add_op.bind(this)({app_id: this.app_id, 
 			       op: Xserv.HISTORY, 
 			       topic: topic, 
 			       event: event, 
 			       arg1: Xserv.HISTORY_TIMESTAMP, 
-			       arg2: String(value), 
+			       arg2: String(offset), 
 			       arg3: String(limit)});
 	};
 	
