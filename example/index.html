@@ -71,11 +71,11 @@
 	var xserv = new Xserv('qLxFC-1'); // app_id
 	// xserv.setReconnectInterval(20000);
 	
-	xserv.addEventListener('open', function() {
+        xserv.addEventListener('open', function(event) {
            $('#state').attr('fill', 'green');
 	});
 	
-	xserv.addEventListener('close', function() {
+	xserv.addEventListener('close', function(event) {
 	    $('#state').attr('fill', 'red');
 	});
 	

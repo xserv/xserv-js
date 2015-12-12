@@ -1,9 +1,9 @@
 (function() {
     var Xserv = function(app_id) {
-	var SERVER = 'mobile-italia.com';
+	var ADDRESS = 'localhost';
 	var PORT = ':4321';
-	var URL = 'ws://' + SERVER + PORT + '/ws';
-	var DEFAULT_AUTH_URL = 'http://' + SERVER + PORT + '/auth_user/';
+	var URL = 'ws://' + ADDRESS + PORT + '/ws';
+	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + PORT + '/auth_user/';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
 	
@@ -11,9 +11,10 @@
 	this.conn = null;
 	this.ops = [];
 	this.listeners = [];
-	this.reconnect_interval = DEFAULT_RI;
-	this.is_auto_reconnect = false;
 	this.user_data = {};
+	this.reconnect_interval = DEFAULT_RI;
+	
+	this.is_auto_reconnect = false;
 	this.in_initialization = false;
 	
 	this.isConnected = function() {
