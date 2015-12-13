@@ -67,12 +67,12 @@
 	    }
 	};
 	
-	this.setReconnectInterval = function(value) {
-	    this.reconnect_interval = value;
+	this.setReconnectInterval = function(milliseconds) {
+	    this.reconnect_interval = milliseconds;
 	};
 	
-	this.setBackupOps = function(value) {
-	    this.is_backup_act = value;
+	this.setBackupOps = function(enable) {
+	    this.is_backup_act = enable;
 	};
 	
 	// privato
