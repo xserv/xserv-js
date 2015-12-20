@@ -22,8 +22,10 @@
 	    return this.conn && this.conn.readyState == WebSocket.OPEN;
 	};
 	
-	this.connect = function() {
-	    this.is_auto_reconnect = true;
+	this.connect = function(auto) {
+	    if (!auto) {
+		this.is_auto_reconnect = true;
+	    }
 	    
 	    if (!this.isConnected() && !this.in_initialization) {
 		this.in_initialization = true;
@@ -51,7 +53,7 @@
 		
 		this.conn.onclose = function(event) {
 		    if (this.is_auto_reconnect) {
-			setTimeout(this.connect.bind(this), this.reconnect_interval);
+			this.setTimeout();
 		    }
 		    
 		    this.in_initialization = false;
@@ -59,8 +61,13 @@
 	    }
 	};
 	
+	this.setTimeout = function() {
+	    setTimeout(function() {
+		this.connect(true);
+	    }.bind(this), this.reconnect_interval);
+	};
+	
 	this.disconnect = function() {
-	    console.log('qui');
 	    this.is_auto_reconnect = false;
 	    
 	    if (this.isConnected()) {
