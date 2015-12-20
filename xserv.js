@@ -2,7 +2,7 @@
     var Xserv = function(app_id) {
 	var ADDRESS = 'localhost';
 	var PORT = ':4321';
-	var URL = 'ws://' + ADDRESS + PORT + '/ws';
+	var URL = 'ws://' + ADDRESS + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + PORT + '/auth_user/';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
@@ -60,6 +60,7 @@
 	};
 	
 	this.disconnect = function() {
+	    console.log('qui');
 	    this.is_auto_reconnect = false;
 	    
 	    if (this.isConnected()) {
@@ -224,8 +225,7 @@
 	    if (!is_string(message) && is_object(message)) {
 		message = JSON.stringify(message);
 	    }
-	    add_op.bind(this)({app_id: this.app_id, 
-			       op: Xserv.TRIGGER, 
+	    add_op.bind(this)({op: Xserv.TRIGGER, 
 			       topic: topic, 
 			       event: event,
 			       arg1: message});
@@ -240,8 +240,7 @@
 	    }
 	    for (var t in topic) {
 		for (var e in event) {
-		    add_op.bind(this)({app_id: this.app_id, 
-				       op: Xserv.BIND, 
+		    add_op.bind(this)({op: Xserv.BIND, 
 				       topic: topic[t], 
 				       event: event[e],
 				       auth_endpoint: auth_endpoint});
@@ -260,8 +259,7 @@
 	    }
 	    for (var t in topic) {
 		for (var e in event) {
-		    add_op.bind(this)({app_id: this.app_id, 
-				       op: Xserv.UNBIND, 
+		    add_op.bind(this)({op: Xserv.UNBIND, 
 				       topic: topic[t], 
 				       event: event[e]});
 		}
@@ -269,8 +267,7 @@
 	};
 	
 	this.historyById = function(topic, event, offset, limit) {
-	    add_op.bind(this)({app_id: this.app_id, 
-			       op: Xserv.HISTORY, 
+	    add_op.bind(this)({op: Xserv.HISTORY, 
 			       topic: topic, 
 			       event: event,
 			       arg1: Xserv.HISTORY_ID,
@@ -279,8 +276,7 @@
 	};
 	
 	this.historyByTimestamp = function(topic, event, offset, limit) {
-	    add_op.bind(this)({app_id: this.app_id, 
-			       op: Xserv.HISTORY, 
+	    add_op.bind(this)({op: Xserv.HISTORY, 
 			       topic: topic, 
 			       event: event, 
 			       arg1: Xserv.HISTORY_TIMESTAMP, 
@@ -289,8 +285,7 @@
 	};
 	
 	this.presence = function(topic, event) {
-	    add_op.bind(this)({app_id: this.app_id,
-			       op: Xserv.PRESENCE, 
+	    add_op.bind(this)({op: Xserv.PRESENCE, 
 			       topic: topic, 
 			       event: event});
 	};
