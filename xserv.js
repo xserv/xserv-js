@@ -3,7 +3,7 @@
 	var ADDRESS = 'localhost';
 	var PORT = ':4321';
 	var URL = 'ws://' + ADDRESS + PORT + '/ws/' + app_id;
-	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + PORT + '/auth_user/';
+	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + PORT + '/app/' + app_id + '/auth_user';
 	var DEFAULT_RI = 5000;
 	var OP_SEP = ':';
 	
@@ -88,7 +88,7 @@
 	    if (this.isConnected()) {
 		if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic)) {
 		    if (json.auth_endpoint) {
-			var auth_url = json.auth_endpoint.endpoint || DEFAULT_AUTH_URL + this.app_id;
+			var auth_url = json.auth_endpoint.endpoint || DEFAULT_AUTH_URL;
 			var auth_user = json.auth_endpoint.user || '';
 			var auth_pass = json.auth_endpoint.pass || '';
 			
