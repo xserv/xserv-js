@@ -1,6 +1,7 @@
 (function() {
     var Xserv = function(app_id) {
-	var ADDRESS = 'mobile-italia.com';
+	var ADDRESS = 'localhost';
+	// var ADDRESS = 'mobile-italia.com';
 	var PORT = ':5555';
 	var URL = 'ws://' + ADDRESS + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + PORT + '/app/' + app_id + '/auth_user';
@@ -180,11 +181,12 @@
 	    } else if (name == 'events') {
 		var event_callback = function(event) {
 		    // intercetta solo i messaggi, eventi da http
-		    if (event.data.charAt(0) != OP_SEP) {
-			var json = JSON.parse(event.data);
+		    var json = JSON.parse(event.data);
+		    if (json.message) {
 			try {
 			    json.message = JSON.parse(json.message);
 			} catch(e) {}
+			
 			callback(json);
 		    }
 		}.bind(this);
@@ -193,32 +195,20 @@
 	    } else if (name == 'ops') {
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
-		    if (event.data.charAt(0) == OP_SEP) {
-			var arr = event.data.split(OP_SEP);
-			if (arr.length >= 7) {
-			    // data structure json array o object
-			    var data = arr[5] || null; // base64
-			    if (data) {
-				try {
-				    data = Base64.decode(data); // decode
-				    data = JSON.parse(data);
-				} catch(e) {}
-			    }
-			    
-			    var json = {rc: parseInt(arr[1], 10),
-					op: parseInt(arr[2], 10),
-					name: stringify_op(arr[2]),
-					topic: arr[3],
-					event: arr[4],
-					data: data,
-					descr: arr[6]};
-			    
-			    // bind privata ok
-			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				set_user_data.bind(this)(json.data);
-			    }
-			    callback(json);
+		    var json = JSON.parse(event.data);
+		    if (json.op) {
+			json.name = stringify_op(json.op); 
+			try {
+			    var data = Base64.decode(json.data); // decode
+			    data = JSON.parse(data);
+			    json.data = data;
+			} catch(e) {}
+			
+			if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+			    set_user_data.bind(this)(json.data);
 			}
+			
+			callback(json);
 		    }
 		}.bind(this);
 		
