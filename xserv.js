@@ -236,8 +236,8 @@
 	    var uuid = generateUUID();
 	    var tmp = {uuid: uuid,
 		       op: Xserv.BIND, 
-		       topic: topic[t], 
-		       event: event[e]};
+		       topic: topic, 
+		       event: event};
 	    if (auth_endpoint) {
 		tmp.auth_endpoint = auth_endpoint;
 	    }
@@ -250,8 +250,8 @@
 	    event = event || '';
 	    add_op.bind(this)({uuid: uuid,
 			       op: Xserv.UNBIND, 
-			       topic: topic[t], 
-			       event: event[e]});
+			       topic: topic, 
+			       event: event});
 	    return uuid;
 	};
 	
