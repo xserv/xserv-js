@@ -1,12 +1,11 @@
 (function() {
     var Xserv = function(app_id) {
-	// var ADDRESS = 'localhost';
-	var ADDRESS = 'mobile-italia.com';
-	var PORT = ':5555';
-	var URL = 'ws://' + ADDRESS + PORT + '/ws/' + app_id;
-	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + PORT + '/app/' + app_id + '/auth_user';
+	var ADDRESS = 'localhost';
+	// var ADDRESS = 'mobile-italia.com';
+	var PORT = '5555';
+	var URL = 'ws://' + ADDRESS + ':' + PORT + '/ws/' + app_id;
+	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
 	var DEFAULT_RI = 5000;
-	var OP_SEP = ':';
 	
 	this.app_id = app_id;
 	this.conn = null;
