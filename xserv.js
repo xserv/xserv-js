@@ -239,11 +239,14 @@
 	    }
 	    for (var t in topic) {
 		for (var e in event) {
-		    add_op.bind(this)({uuid: generateUUID(),
-				       op: Xserv.BIND, 
-				       topic: topic[t], 
-				       event: event[e],
-				       auth_endpoint: auth_endpoint});
+		    var tmp = {uuid: generateUUID(),
+			       op: Xserv.BIND, 
+			       topic: topic[t], 
+			       event: event[e]};
+		    if (auth_endpoint) {
+			tmp.auth_endpoint = auth_endpoint;
+		    }
+		    add_op.bind(this)(tmp);
 		}
 	    }
 	};
