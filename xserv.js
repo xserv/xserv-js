@@ -305,15 +305,12 @@
     Xserv.UNBIND = 202;
     Xserv.HISTORY = 203;
     Xserv.PRESENCE = 204;
-    
     // in uso in presence
     Xserv.PRESENCE_IN = Xserv.BIND + 200;
     Xserv.PRESENCE_OUT = Xserv.UNBIND + 200;
-    
     // in uso in history
     Xserv.HISTORY_ID = 'id';
     Xserv.HISTORY_TIMESTAMP = 'timestamp';
-    
     // events:op result_code
     Xserv.RC_OK = 1;
     Xserv.RC_GENERIC_ERROR = 0;
