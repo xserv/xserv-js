@@ -220,82 +220,74 @@
 	};
 	
 	this.trigger = function(topic, event, message) {
+	    var uuid = generateUUID();
 	    if (!is_string(message) && is_object(message)) {
 		message = JSON.stringify(message);
 	    }
-	    add_op.bind(this)({uuid: generateUUID(),
+	    add_op.bind(this)({uuid: uuid,
 			       op: Xserv.TRIGGER, 
 			       topic: topic, 
 			       event: event,
 			       arg1: message});
+	    return uuid;
 	};
 	
 	this.bind = function(topic, event, auth_endpoint) {
-	    if (!is_array(topic)) {
-		topic = [topic];
+	    var uuid = generateUUID();
+	    var tmp = {uuid: uuid,
+		       op: Xserv.BIND, 
+		       topic: topic[t], 
+		       event: event[e]};
+	    if (auth_endpoint) {
+		tmp.auth_endpoint = auth_endpoint;
 	    }
-	    if (!is_array(event)) {
-		event = [event];
-	    }
-	    for (var t in topic) {
-		for (var e in event) {
-		    var tmp = {uuid: generateUUID(),
-			       op: Xserv.BIND, 
-			       topic: topic[t], 
-			       event: event[e]};
-		    if (auth_endpoint) {
-			tmp.auth_endpoint = auth_endpoint;
-		    }
-		    add_op.bind(this)(tmp);
-		}
-	    }
+	    add_op.bind(this)(tmp);
+	    return uuid;
 	};
 	
 	this.unbind = function(topic, event) {
+	    var uuid = generateUUID();
 	    event = event || '';
-	    
-	    if (!is_array(topic)) {
-		topic = [topic];
-	    }
-	    if (!is_array(event)) {
-		event = [event];
-	    }
-	    for (var t in topic) {
-		for (var e in event) {
-		    add_op.bind(this)({uuid: generateUUID(),
-				       op: Xserv.UNBIND, 
-				       topic: topic[t], 
-				       event: event[e]});
-		}
-	    }
+	    add_op.bind(this)({uuid: uuid,
+			       op: Xserv.UNBIND, 
+			       topic: topic[t], 
+			       event: event[e]});
+	    return uuid;
 	};
 	
 	this.historyById = function(topic, event, offset, limit) {
-	    add_op.bind(this)({uuid: generateUUID(),
+	    var uuid = generateUUID();
+	    add_op.bind(this)({uuid: uuid,
 			       op: Xserv.HISTORY, 
 			       topic: topic, 
 			       event: event,
 			       arg1: Xserv.HISTORY_ID,
 			       arg2: String(offset),
 			       arg3: String(limit)});
+	    return uuid;
 	};
 	
 	this.historyByTimestamp = function(topic, event, offset, limit) {
-	    add_op.bind(this)({uuid: generateUUID(),
+	    var uuid = generateUUID();
+	    add_op.bind(this)({uuid: uuid,
 			       op: Xserv.HISTORY, 
 			       topic: topic, 
 			       event: event, 
 			       arg1: Xserv.HISTORY_TIMESTAMP, 
 			       arg2: String(offset), 
 			       arg3: String(limit)});
+	    return uuid;
 	};
 	
 	this.presence = function(topic, event) {
-	    add_op.bind(this)({uuid: generateUUID(),
+	    var uuid = generateUUID();
+	    add_op.bind(this)({uuid: uuid,
 			       op: Xserv.PRESENCE, 
 			       topic: topic, 
 			       event: event});
+	    return uuid;
 	};
+	
     };
     
     // static
