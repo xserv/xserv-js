@@ -22,8 +22,8 @@
 	    return this.conn && this.conn.readyState == WebSocket.OPEN;
 	};
 	
-	this.connect = function(auto) {
-	    if (!auto) {
+	this.connect = function(no_ar) {
+	    if (!no_ar) {
 		this.is_auto_reconnect = true;
 	    }
 	    
@@ -99,20 +99,20 @@
 			};
 			
 			$.ajax({cache: false, 
-				    crossDomain: true,
-				    // xhrFields: {
-				    //     'withCredentials': true
-				    // },
-				    type: 'post', 
-				    url: auth_url, 
-				    contentType: 'application/json; charset=UTF-8',
-				    data: JSON.stringify(params),
-				    processData: false,
-				    dataType: 'json'})
-			.always(function(data_sign) {
+				crossDomain: true,
+				// xhrFields: {
+				//     'withCredentials': true
+				// },
+				type: 'post', 
+				url: auth_url, 
+				contentType: 'application/json; charset=UTF-8',
+				data: JSON.stringify(params),
+				processData: false,
+				dataType: 'json'})
+			    .always(function(data_sign) {
 				// clone perche' non si tocca quello in lista op
 				var new_json = $.extend({}, json);
-				// delete new_json.auth_endpoint;
+				delete new_json.auth_endpoint;
 				
 				if (data_sign) {
 				    new_json.arg1 = params.user;
@@ -191,7 +191,7 @@
 		}.bind(this);
 		
 		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'ops') {
+	    } else if (name == 'ops_response') {
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
 		    var json = JSON.parse(event.data);
