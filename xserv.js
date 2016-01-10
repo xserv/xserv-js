@@ -201,11 +201,13 @@
 			    var data = Base64.decode(json.data); // decode
 			    data = JSON.parse(data);
 			    json.data = data;
+			    
+			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				if (is_object(json.data)) {
+				    set_user_data.bind(this)(json.data);
+				}
+			    }
 			} catch(e) {}
-			
-			if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-			    set_user_data.bind(this)(json.data);
-			}
 			
 			callback(json);
 		    }
