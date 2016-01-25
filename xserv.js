@@ -175,9 +175,7 @@
 	};
 	
 	this.addEventListener = function(name, callback) {
-	    if (name == 'message') {
-		
-	    } else if (name == 'receive_events') {
+	    if (name == 'receive_events') {
 		var event_callback = function(event) {
 		    // intercetta solo i messaggi, eventi da http
 		    var json = JSON.parse(event.data);
