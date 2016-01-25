@@ -1,8 +1,8 @@
 (function() {
     var Xserv = function(app_id) {
-	var ADDRESS = 'localhost';
+	var ADDRESS = '192.168.130.153';
 	// var ADDRESS = 'mobile-italia.com';
-	var PORT = '5555';
+	var PORT = '4332';
 	var URL = 'ws://' + ADDRESS + ':' + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
 	var DEFAULT_RI = 5000;
@@ -177,7 +177,7 @@
 	this.addEventListener = function(name, callback) {
 	    if (name == 'message') {
 		
-	    } else if (name == 'events') {
+	    } else if (name == 'receive_events') {
 		var event_callback = function(event) {
 		    // intercetta solo i messaggi, eventi da http
 		    var json = JSON.parse(event.data);
@@ -191,7 +191,7 @@
 		}.bind(this);
 		
 		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'ops_response') {
+	    } else if (name == 'receive_ops_response') {
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
 		    var json = JSON.parse(event.data);
@@ -214,8 +214,12 @@
 		}.bind(this);
 		
 		this.listeners.push({event: 'message', callback: event_callback});
-	    } else {
-		this.listeners.push({event: name, callback: callback});
+	    } else if (name == 'open_connection') {
+		this.listeners.push({event: 'open', callback: callback});
+	    } else if (name == 'close_connection') {
+		this.listeners.push({event: 'close', callback: callback});
+	    } else if (name == 'error_connection') {
+		this.listeners.push({event: 'error', callback: callback});
 	    }
 	};
 	

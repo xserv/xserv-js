@@ -75,21 +75,21 @@
 	var xserv = new Xserv('qLxFC-1'); // app_id
 	// xserv.setReconnectInterval(20000);
 	
-        xserv.addEventListener('open', function(event) {
+        xserv.addEventListener('open_connection', function(event) {
            $('#state').attr('fill', 'green');
 	});
 	
-	xserv.addEventListener('close', function(event) {
+	xserv.addEventListener('close_connection', function(event) {
 	    $('#state').attr('fill', 'red');
 	});
 	
-	xserv.addEventListener('events', function(json) {
+	xserv.addEventListener('receive_events', function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
             $(html).hide().prependTo('#output').fadeIn(1000);
             // alert(json.message);
         });
         
-        xserv.addEventListener('ops_response', function(json) {
+        xserv.addEventListener('receive_ops_response', function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
 	    $(html).hide().prependTo('#output_op').fadeIn(1000);
             
