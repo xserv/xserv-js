@@ -49,6 +49,17 @@
 		    }
 		    
 		    this.in_initialization = false;
+		    
+		    // stat
+		    var bw = getInfoBrowser();
+		    var tz = getTimeZoneData();
+		    var stat = {type: Xserv.SESSION,
+				uuid: generateUUID(),
+				model: bw.browser,
+				os: bw.os,
+				tz_offset: tz.tz_offset,
+				tz_dst: tz.tz_dst};
+		    this.conn.send(JSON.stringify(stat));
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
@@ -298,6 +309,8 @@
 	return topic.charAt(0) == '@';
     };
     
+    // stat:type
+    Xserv.SESSION = 0;
     // events:op op
     Xserv.TRIGGER = 200;
     Xserv.BIND = 201;
@@ -330,6 +343,78 @@
 	    return (c=='x' ? r : (r&0x3|0x8)).toString(16);
 	});
 	return uuid;
+    };
+    
+    var getTimeZoneData = function() {
+	var today = new Date();
+	var jan = new Date(today.getFullYear(), 0, 1);
+	var jul = new Date(today.getFullYear(), 6, 1);
+	var dst = today.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+	
+	return {tz_offset: -(today.getTimezoneOffset()/60), tz_dst: +dst};
+    };
+    
+    var getInfoBrowser = function() {
+	var nAgt = navigator.userAgent;
+	var browserName  = navigator.appName;
+	var fullVersion  = ''+parseFloat(navigator.appVersion); 
+	var nameOffset,verOffset,ix;
+	
+	// In Opera, the true version is after "Opera" or after "Version"
+	if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+	    browserName = "Opera";
+	    fullVersion = nAgt.substring(verOffset+6);
+	    if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+		fullVersion = nAgt.substring(verOffset+8);
+	}
+	// In MSIE, the true version is after "MSIE" in userAgent
+	else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+	    browserName = "Microsoft Internet Explorer";
+	    fullVersion = nAgt.substring(verOffset+5);
+	}
+	// In Chrome, the true version is after "Chrome" 
+	else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+	    browserName = "Chrome";
+	    fullVersion = nAgt.substring(verOffset+7);
+	}
+	// In Safari, the true version is after "Safari" or after "Version" 
+	else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+	    browserName = "Safari";
+	    fullVersion = nAgt.substring(verOffset+7);
+	    if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+		fullVersion = nAgt.substring(verOffset+8);
+	}
+	// In Firefox, the true version is after "Firefox" 
+	else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+	    browserName = "Firefox";
+	    fullVersion = nAgt.substring(verOffset+8);
+	}
+	// In most other browsers, "name/version" is at the end of userAgent 
+	else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+	    browserName = nAgt.substring(nameOffset,verOffset);
+	    fullVersion = nAgt.substring(verOffset+1);
+	    if (browserName.toLowerCase()==browserName.toUpperCase()) {
+		browserName = navigator.appName;
+	    }
+	}
+	// trim the fullVersion string at semicolon/space if present
+	if ((ix=fullVersion.indexOf(";"))!=-1)
+	    fullVersion=fullVersion.substring(0,ix);
+	if ((ix=fullVersion.indexOf(" "))!=-1)
+	    fullVersion=fullVersion.substring(0,ix);
+	
+	var majorVersion = parseInt(''+fullVersion,10);
+	if (isNaN(majorVersion)) {
+	    fullVersion  = ''+parseFloat(navigator.appVersion); 
+	}
+	
+	var os = "Unknown";
+	try {
+	    os = nAgt.split('(')[1].split(')')[0];
+	} catch(e) {
+	}
+	
+	return {browser: browserName + ' ' + fullVersion, os: os};
     };
     
     // Create Base64 Object
