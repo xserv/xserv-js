@@ -70,8 +70,6 @@
 	};
 	
 	var sendStat = function() {
-	    if (!this.isConnected()) return;
-	    
 	    var bw = getInfoBrowser();
 	    var tz = getTimeZoneData();
 	    var stat = {uuid: generateUUID(),
