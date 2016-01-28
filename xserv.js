@@ -1,7 +1,7 @@
 (function() {
     var Xserv = function(app_id) {
-	var ADDRESS = '192.168.130.153';
-	// var ADDRESS = 'mobile-italia.com';
+	// var ADDRESS = '192.168.130.153';
+	var ADDRESS = 'mobile-italia.com';
 	var PORT = '4332';
 	var URL = 'ws://' + ADDRESS + ':' + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
@@ -9,14 +9,11 @@
 	
 	this.app_id = app_id;
 	this.conn = null;
-	this.ops = [];
 	this.listeners = [];
 	this.user_data = {};
 	this.reconnect_interval = DEFAULT_RI;
 	
 	this.is_auto_reconnect = false;
-	this.is_backup_act = true;
-	this.in_initialization = false;
 	
 	this.isConnected = function() {
 	    return this.conn && this.conn.readyState == WebSocket.OPEN;
@@ -27,9 +24,7 @@
 		this.is_auto_reconnect = true;
 	    }
 	    
-	    if (!this.isConnected() && !this.in_initialization) {
-		this.in_initialization = true;
-		
+	    if (!this.isConnected()) {
 		if (window.MozWebSocket) {
 		    window.WebSocket = window.MozWebSocket;
 		}
@@ -44,12 +39,6 @@
 		
 		// su connect
 		this.conn.onopen = function(event) {
-		    for (var j in this.ops) {
-			send.bind(this)(this.ops[j]);
-		    }
-		    
-		    this.in_initialization = false;
-		    
 		    // stat
 		    var bw = getInfoBrowser();
 		    var tz = getTimeZoneData();
@@ -65,8 +54,6 @@
 		    if (this.is_auto_reconnect) {
 			this.setTimeout();
 		    }
-		    
-		    this.in_initialization = false;
 		}.bind(this);
 	    }
 	};
@@ -89,65 +76,48 @@
 	    this.reconnect_interval = milliseconds;
 	};
 	
-	this.setBackupOps = function(enable) {
-	    this.is_backup_act = enable;
-	};
-	
 	// privato
 	var send = function(json) {
-	    if (this.isConnected()) {
-		if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic)) {
-		    if (json.auth_endpoint) {
-			var auth_url = json.auth_endpoint.endpoint || DEFAULT_AUTH_URL;
-			var auth_user = json.auth_endpoint.user || '';
-			var auth_pass = json.auth_endpoint.pass || '';
-			
-			var params = {
-			    topic: json.topic,
-			    user: auth_user,
-			    pass: auth_pass
-			};
-			
-			$.ajax({cache: false, 
-				crossDomain: true,
-				// xhrFields: {
-				//     'withCredentials': true
-				// },
-				type: 'post', 
-				url: auth_url, 
-				contentType: 'application/json; charset=UTF-8',
-				data: JSON.stringify(params),
-				processData: false,
-				dataType: 'json'})
-			    .always(function(data_sign) {
-				// clone perche' non si tocca quello in lista op
-				var new_json = $.extend({}, json);
-				delete new_json.auth_endpoint;
-				
-				if (data_sign) {
-				    new_json.arg1 = params.user;
-				    new_json.arg2 = data_sign.data;
-				    new_json.arg3 = data_sign.sign;
-				}
-				
-				this.conn.send(JSON.stringify(new_json));
-			    }.bind(this));
-		    } else {
-			this.conn.send(JSON.stringify(json));
-		    }
-		} else {
-		    this.conn.send(JSON.stringify(json));
-		}
-	    }
-	};
-	
-	var add_op = function(json) {
-	    // salva tutte op da ripetere su riconnessione
-	    if (this.is_backup_act && (json.op == Xserv.BIND || json.op == Xserv.UNBIND)) {
-		this.ops.push(json);
-	    }
+	    if (!this.isConnected()) return;
 	    
-	    send.bind(this)(json);
+	    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.auth_endpoint) {
+		var auth_url = json.auth_endpoint.endpoint || DEFAULT_AUTH_URL;
+		var auth_user = json.auth_endpoint.user || '';
+		var auth_pass = json.auth_endpoint.pass || '';
+		
+		var params = {
+		    topic: json.topic,
+		    user: auth_user,
+		    pass: auth_pass
+		};
+		
+		$.ajax({cache: false, 
+			    crossDomain: true,
+			    // xhrFields: {
+			    //     'withCredentials': true
+			    // },
+			    type: 'post', 
+			    url: auth_url, 
+			    contentType: 'application/json; charset=UTF-8',
+			    data: JSON.stringify(params),
+			    processData: false,
+			    dataType: 'json'})
+		    .always(function(data_sign) {
+			    // clone perche' non si tocca quello in lista op
+			    var new_json = $.extend({}, json);
+			    delete new_json.auth_endpoint;
+			    
+			    if (data_sign) {
+				new_json.arg1 = params.user;
+				new_json.arg2 = data_sign.data;
+				new_json.arg3 = data_sign.sign;
+			    }
+			    
+			    this.conn.send(JSON.stringify(new_json));
+			}.bind(this));
+	    } else {
+		this.conn.send(JSON.stringify(json));
+	    }
 	};
 	
 	var is_string = function(value) {
@@ -232,19 +202,23 @@
 	};
 	
 	this.trigger = function(topic, event, message) {
+	    if (!this.isConnected()) return;
+	    
 	    var uuid = generateUUID();
 	    if (!is_string(message) && is_object(message)) {
 		message = JSON.stringify(message);
 	    }
-	    add_op.bind(this)({uuid: uuid,
-			       op: Xserv.TRIGGER, 
-			       topic: topic, 
-			       event: event,
-			       arg1: message});
+	    send.bind(this)({uuid: uuid, 
+			     op: Xserv.TRIGGER, 
+			     topic: topic, 
+			     event: event,
+			     arg1: message});
 	    return uuid;
 	};
 	
 	this.bind = function(topic, event, auth_endpoint) {
+	    if (!this.isConnected()) return;
+	    
 	    var uuid = generateUUID();
 	    var tmp = {uuid: uuid,
 		       op: Xserv.BIND, 
@@ -253,50 +227,58 @@
 	    if (auth_endpoint) {
 		tmp.auth_endpoint = auth_endpoint;
 	    }
-	    add_op.bind(this)(tmp);
+	    send.bind(this)(tmp);
 	    return uuid;
 	};
 	
 	this.unbind = function(topic, event) {
+	    if (!this.isConnected()) return;
+	    
 	    var uuid = generateUUID();
 	    event = event || '';
-	    add_op.bind(this)({uuid: uuid,
-			       op: Xserv.UNBIND, 
-			       topic: topic, 
-			       event: event});
+	    send.bind(this)({uuid: uuid,
+			op: Xserv.UNBIND, 
+			topic: topic, 
+			event: event});
 	    return uuid;
 	};
 	
 	this.historyById = function(topic, event, offset, limit) {
+	    if (!this.isConnected()) return;
+	    
 	    var uuid = generateUUID();
-	    add_op.bind(this)({uuid: uuid,
-			       op: Xserv.HISTORY, 
-			       topic: topic, 
-			       event: event,
-			       arg1: Xserv.HISTORY_ID,
-			       arg2: String(offset),
-			       arg3: String(limit)});
+	    send.bind(this)({uuid: uuid,
+			op: Xserv.HISTORY, 
+			topic: topic, 
+			event: event,
+			arg1: Xserv.HISTORY_ID,
+			arg2: String(offset),
+			arg3: String(limit)});
 	    return uuid;
 	};
 	
 	this.historyByTimestamp = function(topic, event, offset, limit) {
+	    if (!this.isConnected()) return;
+	    
 	    var uuid = generateUUID();
-	    add_op.bind(this)({uuid: uuid,
-			       op: Xserv.HISTORY, 
-			       topic: topic, 
-			       event: event, 
-			       arg1: Xserv.HISTORY_TIMESTAMP, 
-			       arg2: String(offset), 
-			       arg3: String(limit)});
+	    send.bind(this)({uuid: uuid,
+			op: Xserv.HISTORY, 
+			topic: topic, 
+			event: event, 
+			arg1: Xserv.HISTORY_TIMESTAMP, 
+			arg2: String(offset), 
+			arg3: String(limit)});
 	    return uuid;
 	};
 	
 	this.presence = function(topic, event) {
+	    if (!this.isConnected()) return;
+	    
 	    var uuid = generateUUID();
-	    add_op.bind(this)({uuid: uuid,
-			       op: Xserv.PRESENCE, 
-			       topic: topic, 
-			       event: event});
+	    send.bind(this)({uuid: uuid,
+			op: Xserv.PRESENCE, 
+			topic: topic, 
+			event: event});
 	    return uuid;
 	};
 	
