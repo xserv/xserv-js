@@ -40,14 +40,7 @@
 		// su connect
 		this.conn.onopen = function(event) {
 		    // stat
-		    var bw = getInfoBrowser();
-		    var tz = getTimeZoneData();
-		    var stat = {uuid: generateUUID(),
-				model: bw.browser,
-				os: bw.os,
-				tz_offset: tz.tz_offset,
-				tz_dst: tz.tz_dst};
-		    this.conn.send(JSON.stringify(stat));
+		    sendStat.bind(this)();
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
@@ -74,6 +67,19 @@
 	
 	this.setReconnectInterval = function(milliseconds) {
 	    this.reconnect_interval = milliseconds;
+	};
+	
+	var sendStat = function() {
+	    if (!this.isConnected()) return;
+	    
+	    var bw = getInfoBrowser();
+	    var tz = getTimeZoneData();
+	    var stat = {uuid: generateUUID(),
+			model: bw.browser,
+			os: bw.os,
+			tz_offset: tz.tz_offset,
+			tz_dst: tz.tz_dst};
+	    this.conn.send(JSON.stringify(stat));
 	};
 	
 	// privato
@@ -329,8 +335,8 @@
 	var jan = new Date(today.getFullYear(), 0, 1);
 	var jul = new Date(today.getFullYear(), 6, 1);
 	var dst = today.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-	
-	return {tz_offset: -(today.getTimezoneOffset()/60), tz_dst: +dst};
+	// js sono inverti e si fa * -1
+	return {tz_offset: -1 * parseInt(today.getTimezoneOffset() / 60), tz_dst: +dst};
     };
     
     var getInfoBrowser = function() {
