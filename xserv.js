@@ -72,9 +72,19 @@
 	var sendStat = function() {
 	    var bw = getInfoBrowser();
 	    var tz = getTimeZoneData();
+	    
+	    var model = bw.browser || "";
+	    var os = bw.os || "";
+	    if (model.length > 45) {
+		model = model.substring(0, 45);
+	    }
+	    if (os.length > 45) {
+		os = os.substring(0, 45);
+	    }
+	    
 	    var stat = {uuid: generateUUID(),
-			model: bw.browser,
-			os: bw.os,
+			model: model,
+			os: os,
 			tz_offset: tz.tz_offset,
 			tz_dst: tz.tz_dst};
 	    this.conn.send(JSON.stringify(stat));
