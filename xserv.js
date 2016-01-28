@@ -116,29 +116,29 @@
 		};
 		
 		$.ajax({cache: false, 
-			    crossDomain: true,
-			    // xhrFields: {
-			    //     'withCredentials': true
-			    // },
-			    type: 'post', 
-			    url: auth_url, 
-			    contentType: 'application/json; charset=UTF-8',
-			    data: JSON.stringify(params),
-			    processData: false,
-			    dataType: 'json'})
+			crossDomain: true,
+			// xhrFields: {
+			//     'withCredentials': true
+			// },
+			type: 'post', 
+			url: auth_url, 
+			contentType: 'application/json; charset=UTF-8',
+			data: JSON.stringify(params),
+			processData: false,
+			dataType: 'json'})
 		    .always(function(data_sign) {
-			    // clone perche' non si tocca quello in lista op
-			    var new_json = $.extend({}, json);
-			    delete new_json.auth_endpoint;
-			    
-			    if (data_sign) {
-				new_json.arg1 = params.user;
-				new_json.arg2 = data_sign.data;
-				new_json.arg3 = data_sign.sign;
-			    }
-			    
-			    this.conn.send(JSON.stringify(new_json));
-			}.bind(this));
+			// clone perche' non si tocca quello in lista op
+			var new_json = $.extend({}, json);
+			delete new_json.auth_endpoint;
+			
+			if (data_sign) {
+			    new_json.arg1 = params.user;
+			    new_json.arg2 = data_sign.data;
+			    new_json.arg3 = data_sign.sign;
+			}
+			
+			this.conn.send(JSON.stringify(new_json));
+		    }.bind(this));
 	    } else {
 		this.conn.send(JSON.stringify(json));
 	    }
@@ -261,9 +261,9 @@
 	    var uuid = generateUUID();
 	    event = event || '';
 	    send.bind(this)({uuid: uuid,
-			op: Xserv.UNBIND, 
-			topic: topic, 
-			event: event});
+			     op: Xserv.UNBIND, 
+			     topic: topic, 
+			     event: event});
 	    return uuid;
 	};
 	
@@ -272,12 +272,12 @@
 	    
 	    var uuid = generateUUID();
 	    send.bind(this)({uuid: uuid,
-			op: Xserv.HISTORY, 
-			topic: topic, 
-			event: event,
-			arg1: Xserv.HISTORY_ID,
-			arg2: String(offset),
-			arg3: String(limit)});
+			     op: Xserv.HISTORY, 
+			     topic: topic, 
+			     event: event,
+			     arg1: Xserv.HISTORY_ID,
+			     arg2: String(offset),
+			     arg3: String(limit)});
 	    return uuid;
 	};
 	
@@ -286,12 +286,12 @@
 	    
 	    var uuid = generateUUID();
 	    send.bind(this)({uuid: uuid,
-			op: Xserv.HISTORY, 
-			topic: topic, 
-			event: event, 
-			arg1: Xserv.HISTORY_TIMESTAMP, 
-			arg2: String(offset), 
-			arg3: String(limit)});
+			     op: Xserv.HISTORY, 
+			     topic: topic, 
+			     event: event, 
+			     arg1: Xserv.HISTORY_TIMESTAMP, 
+			     arg2: String(offset), 
+			     arg3: String(limit)});
 	    return uuid;
 	};
 	
@@ -300,9 +300,9 @@
 	    
 	    var uuid = generateUUID();
 	    send.bind(this)({uuid: uuid,
-			op: Xserv.PRESENCE, 
-			topic: topic, 
-			event: event});
+			     op: Xserv.PRESENCE, 
+			     topic: topic, 
+			     event: event});
 	    return uuid;
 	};
 	
