@@ -46,8 +46,8 @@
            xserv.disconnect();
         });
         $("#clear").click(function() {
-           $('#output_op').html("");
-           $('#output').html("");
+           $("#output_op").html("");
+           $("#output").html("");
         });
         
         $("#trigger").click(function() {
@@ -72,26 +72,26 @@
            xserv.historyByTimestamp($("#topic").val(), $("#event").val(), $("#offset").val(), $("#limit").val());
         });
         
-	var xserv = new Xserv('9Pf80-3'); // app_id
+	var xserv = new Xserv("9Pf80-3"); // app_id
 	// xserv.setReconnectInterval(20000);
 	
-        xserv.addEventListener('open_connection', function(event) {
-           $('#state').attr('fill', 'green');
+        xserv.addEventListener("open_connection", function(event) {
+           $("#state").attr("fill", "green");
 	});
 	
-	xserv.addEventListener('close_connection', function(event) {
-	    $('#state').attr('fill', 'red');
+	xserv.addEventListener("close_connection", function(event) {
+	    $("#state").attr("fill", "red");
 	});
 	
-	xserv.addEventListener('receive_events', function(json) {
+	xserv.addEventListener("receive_events", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
-            $(html).hide().prependTo('#output').fadeIn(1000);
+            $(html).hide().prependTo("#output").fadeIn(1000);
             // alert(json.message);
         });
         
-        xserv.addEventListener('receive_ops_response', function(json) {
+        xserv.addEventListener("receive_ops_response", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
-	    $(html).hide().prependTo('#output_op').fadeIn(1000);
+	    $(html).hide().prependTo("#output_op").fadeIn(1000);
             
             if (json.op == Xserv.BIND && json.rc == Xserv.RC_OK && Xserv.isPrivateTopic(json.topic)) {
                $("#info").text(JSON.stringify(xserv.user_data));
