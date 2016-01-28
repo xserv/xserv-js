@@ -1,7 +1,7 @@
 (function() {
     var Xserv = function(app_id) {
-	// var ADDRESS = '192.168.130.153';
-	var ADDRESS = 'mobile-italia.com';
+	var ADDRESS = '192.168.130.153';
+	// var ADDRESS = 'mobile-italia.com';
 	var PORT = '4332';
 	var URL = 'ws://' + ADDRESS + ':' + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
@@ -53,8 +53,7 @@
 		    // stat
 		    var bw = getInfoBrowser();
 		    var tz = getTimeZoneData();
-		    var stat = {type: Xserv.SESSION,
-				uuid: generateUUID(),
+		    var stat = {uuid: generateUUID(),
 				model: bw.browser,
 				os: bw.os,
 				tz_offset: tz.tz_offset,
@@ -309,8 +308,6 @@
 	return topic.charAt(0) == '@';
     };
     
-    // stat:type
-    Xserv.SESSION = 0;
     // events:op op
     Xserv.TRIGGER = 200;
     Xserv.BIND = 201;
