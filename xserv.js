@@ -10,8 +10,8 @@
 
 (function() {
     var Xserv = function(app_id) {
-	// var ADDRESS = '192.168.130.153';
-	var ADDRESS = 'mobile-italia.com';
+	var ADDRESS = '192.168.130.153';
+	// var ADDRESS = 'mobile-italia.com';
 	var PORT = '4332';
 	var URL = 'ws://' + ADDRESS + ':' + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
@@ -22,6 +22,7 @@
 	this.listeners = [];
 	this.user_data = {};
 	this.reconnect_interval = DEFAULT_RI;
+	this.instanceUUID = generateUUID();
 	
 	this.is_auto_reconnect = false;
 	
@@ -38,12 +39,20 @@
 		if (window.MozWebSocket) {
 		    window.WebSocket = window.MozWebSocket;
 		}
+		
+		// free
+		if (this.conn) {
+		    for (var i in this.listeners) {
+			this.conn.removeEventListener(this.listeners[i].event, this.listeners[i].callback);
+		    }
+		    delete this.conn;
+		}
+		
 		// non esiste un reopen quindi va reinizializzato tutto e si deve gestire una
 		// lista anche degli addEventListener sulla socket
 		this.conn = new WebSocket(URL);
 		
 		for (var i in this.listeners) {
-		    // console.log(JSON.stringify(this.listeners[i]));
 		    this.conn.addEventListener(this.listeners[i].event, this.listeners[i].callback);
 		}
 		
@@ -92,7 +101,7 @@
 		os = os.substring(0, 45);
 	    }
 	    
-	    var stat = {uuid: generateUUID(),
+	    var stat = {uuid: this.instanceUUID,
 			model: model,
 			os: os,
 			tz_offset: tz.tz_offset,
