@@ -17,22 +17,21 @@
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
 	var DEFAULT_RI = 5000;
 	
-	this.app_id = app_id;
-	this.conn = null;
-	this.listeners = [];
-	this.user_data = {};
-	this.reconnect_interval = DEFAULT_RI;
-	this.instanceUUID = generateUUID();
+	var conn = null;
+	var listeners = [];
+	var user_data = {};
+	var reconnect_interval = DEFAULT_RI;
+	var instanceUUID = generateUUID();
 	
-	this.is_auto_reconnect = false;
+	var is_auto_reconnect = false;
 	
 	this.isConnected = function() {
-	    return this.conn && this.conn.readyState == WebSocket.OPEN;
+	    return conn && conn.readyState == WebSocket.OPEN;
 	};
 	
 	this.connect = function(no_ar) {
 	    if (!no_ar) {
-		this.is_auto_reconnect = true;
+		is_auto_reconnect = true;
 	    }
 	    
 	    if (!this.isConnected()) {
@@ -41,51 +40,59 @@
 		}
 		
 		// free
-		if (this.conn) {
-		    for (var i in this.listeners) {
-			this.conn.removeEventListener(this.listeners[i].event, this.listeners[i].callback);
+		if (conn) {
+		    for (var i in listeners) {
+			conn.removeEventListener(listeners[i].event, listeners[i].callback);
 		    }
-		    delete this.conn;
+		    delete conn;
 		}
 		
 		// non esiste un reopen quindi va reinizializzato tutto e si deve gestire una
 		// lista anche degli addEventListener sulla socket
-		this.conn = new WebSocket(URL);
+		conn = new WebSocket(URL);
 		
-		for (var i in this.listeners) {
-		    this.conn.addEventListener(this.listeners[i].event, this.listeners[i].callback);
+		for (var i in listeners) {
+		    conn.addEventListener(listeners[i].event, listeners[i].callback);
 		}
 		
 		// su connect
-		this.conn.onopen = function(event) {
+		conn.onopen = function(event) {
 		    // stat
 		    sendStat.bind(this)();
 		}.bind(this);
 		
-		this.conn.onclose = function(event) {
-		    if (this.is_auto_reconnect) {
-			this.setTimeout();
+		conn.onclose = function(event) {
+		    if (is_auto_reconnect) {
+			reConnect.bind(this)();
 		    }
 		}.bind(this);
 	    }
 	};
 	
-	this.setTimeout = function() {
+	var reConnect = function() {
 	    setTimeout(function() {
 		this.connect(true);
-	    }.bind(this), this.reconnect_interval);
+	    }.bind(this), reconnect_interval);
 	};
 	
 	this.disconnect = function() {
-	    this.is_auto_reconnect = false;
+	    is_auto_reconnect = false;
 	    
 	    if (this.isConnected()) {
-		this.conn.close();
+		conn.close();
 	    }
 	};
 	
 	this.setReconnectInterval = function(milliseconds) {
-	    this.reconnect_interval = milliseconds;
+	    reconnect_interval = milliseconds;
+	};
+	
+	this.getReconnectInterval = function() {
+	    return reconnect_interval;
+	};
+	
+	this.getUserData = function() {
+	    return user_data;
 	};
 	
 	var sendStat = function() {
@@ -101,12 +108,12 @@
 		os = os.substring(0, 45);
 	    }
 	    
-	    var stat = {uuid: this.instanceUUID,
+	    var stat = {uuid: instanceUUID,
 			model: model,
 			os: os,
 			tz_offset: tz.tz_offset,
 			tz_dst: tz.tz_dst};
-	    this.conn.send(JSON.stringify(stat));
+	    conn.send(JSON.stringify(stat));
 	};
 	
 	// privato
@@ -146,10 +153,10 @@
 			    new_json.arg3 = data_sign.sign;
 			}
 			
-			this.conn.send(JSON.stringify(new_json));
+			conn.send(JSON.stringify(new_json));
 		    }.bind(this));
 	    } else {
-		this.conn.send(JSON.stringify(json));
+		conn.send(JSON.stringify(json));
 	    }
 	};
 	
@@ -166,7 +173,7 @@
 	};
 	
 	var set_user_data = function(json) {
-	    this.user_data = json;
+	    user_data = json;
 	};
 	
 	var stringify_op = function(code) {
@@ -201,7 +208,7 @@
 		    }
 		}.bind(this);
 		
-		this.listeners.push({event: 'message', callback: event_callback});
+		listeners.push({event: 'message', callback: event_callback});
 	    } else if (name == 'receive_ops_response') {
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
@@ -224,13 +231,13 @@
 		    }
 		}.bind(this);
 		
-		this.listeners.push({event: 'message', callback: event_callback});
+		listeners.push({event: 'message', callback: event_callback});
 	    } else if (name == 'open_connection') {
-		this.listeners.push({event: 'open', callback: callback});
+		listeners.push({event: 'open', callback: callback});
 	    } else if (name == 'close_connection') {
-		this.listeners.push({event: 'close', callback: callback});
+		listeners.push({event: 'close', callback: callback});
 	    } else if (name == 'error_connection') {
-		this.listeners.push({event: 'error', callback: callback});
+		listeners.push({event: 'error', callback: callback});
 	    }
 	};
 	

@@ -94,7 +94,7 @@
 	    $(html).hide().prependTo("#output_op").fadeIn(1000);
             
             if (json.op == Xserv.BIND && json.rc == Xserv.RC_OK && Xserv.isPrivateTopic(json.topic)) {
-               $("#info").text(JSON.stringify(xserv.user_data));
+               $("#info").text(JSON.stringify(xserv.getUserData()));
             }
             // alert(json.data);
 	});
