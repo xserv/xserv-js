@@ -11,7 +11,7 @@
 (function() {
     var Xserv = function(app_id) {
 	// var ADDRESS = '192.168.1.130';
-	var ADDRESS = 'mobile-italia.com';
+	var ADDRESS = 'xserv.mobile-italia.com';
 	var PORT = '4332';
 	var URL = 'ws://' + ADDRESS + ':' + PORT + '/ws/' + app_id;
 	var DEFAULT_AUTH_URL = 'http://' + ADDRESS + ':' + PORT + '/app/' + app_id + '/auth_user';
