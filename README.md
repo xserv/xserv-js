@@ -2,7 +2,7 @@
   <img src="http://mobile-italia.com/xserv/assets/images/apple-icon-114x114.png" alt="Xserv" title="Xserv">
 </p>
 
-Xserv is a simple hosted API for quickly, easily and securely integrating realtime bi-directional functionality via WebSockets to web and mobile apps, or any other Internet connected device..
+Xserv JS is a simple client library to integrating real-time bi-directional functionality via WebSockets to web and mobile apps, or any other Internet connected device.
 
 Choose Xserv for your next project, or migrate over your existing projects—you'll be happy you did!
 
