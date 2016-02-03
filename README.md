@@ -4,8 +4,6 @@
 
 Xserv JS is a simple client library to integrating real-time bi-directional functionality via WebSockets to web and mobile apps, or any other Internet connected device.
 
-Choose Xserv for your next project, or migrate over your existing projects—you'll be happy you did!
-
 ## How To Get Started
 
 - [Download Xserv](https://github.com/xserv/xserv-js/archive/master.zip) and try out the included Javascript example apps.
