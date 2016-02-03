@@ -13,7 +13,7 @@ Choose Xserv for your next project, or migrate over your existing projects—you
 
 ## Installation
 
-Include in your page jQuery and Xserv SDK library.
+Include in your page jQuery and Xserv library.
 
 ```
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
