@@ -2,6 +2,8 @@
   <img src="http://mobile-italia.com/xserv/assets/images/apple-icon-114x114.png" alt="Xserv" title="Xserv">
 </p>
 
+# Xserv Javascript Client
+
 Xserv JS is a simple client library integrating real-time bi-directional messaging via WebSockets to web and mobile apps, or any other Internet connected device.
 
 ## How To Get Started
