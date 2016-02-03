@@ -8,8 +8,8 @@ Choose Xserv for your next project, or migrate over your existing projects—you
 
 ## How To Get Started
 
-- [Download Xserv](https://github.com/xserv/xserv-js/archive/master.zip) and try out the included iPhone example apps
-- Read the ["Getting Started" guide](http://mobile-italia.com/xserv/docs#)
+- [Download Xserv](https://github.com/xserv/xserv-js/archive/master.zip) and try out the included an example.
+- Read the ["Getting Started" guide](http://mobile-italia.com/xserv/docs#).
 
 ## Installation
 
