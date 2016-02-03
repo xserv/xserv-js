@@ -1,8 +1,36 @@
-# xserv-js
+<p align="center" >
+  <img src="http://mobile-italia.com/xserv/assets/images/apple-icon-114x114.png" alt="Xserv" title="Xserv">
+</p>
+
+Xserv is a simple hosted API for quickly, easily and securely integrating realtime bi-directional functionality via WebSockets to web and mobile apps, or any other Internet connected device..
+
+Choose Xserv for your next project, or migrate over your existing projects—you'll be happy you did!
+
+## How To Get Started
+
+- [Download Xserv](https://github.com/xserv/xserv-js/archive/master.zip) and try out the included iPhone example apps
+- Read the ["Getting Started" guide](http://mobile-italia.com/xserv/docs#)
+
+## Installation
+
+Include in your page jQuery and Xserv SDK library.
 
 ```
-<!-- include in your page jQuery and Xserv SDK -->
+<!--  -->
 
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="http://mobile-italia.com/xserv/xserv.min.js"></script>
 ```
+
+## Credits
+
+Xserv is owned and maintained by the [mobile-italia.com] (http://mobile-italia.com).
+
+
+### Security Disclosure
+
+If you believe you have identified a security vulnerability with Xserv, you should report it as soon as possible via email to xserv.dev@gmail.com. Please do not post it to a public issue tracker.
+
+## License
+
+Xserv is released under the GNU General Public License version 3. See LICENSE for details.
