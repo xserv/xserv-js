@@ -9,7 +9,7 @@ This library is client that allows Javascript web browser clients to connect to 
 
 ## How To Get Started
 
-- [Download Xserv](https://github.com/xserv/xserv-js/archive/master.zip) and try out the included Javascript example apps.
+- [Download xserv-js](https://github.com/xserv/xserv-js/archive/master.zip) and try out the included Javascript example apps.
 - Read the ["Getting Started" guide](http://mobile-italia.com/xserv/docs#).
 
 ## Installation
