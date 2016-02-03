@@ -8,6 +8,8 @@
  You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 ***/
 
+// version 1.0.0
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
 	// AMD
@@ -66,10 +68,76 @@
 	    this.conn.send(JSON.stringify(stat));
 	};
 	
+	var send = function(json) {
+	    if (!this.isConnected()) return;
+	    
+	    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.auth_endpoint) {
+		var auth_url = json.auth_endpoint.endpoint || 
+		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id});
+		var auth_user = json.auth_endpoint.user || '';
+		var auth_pass = json.auth_endpoint.pass || '';
+		
+		var params = {
+		    topic: json.topic,
+		    user: auth_user,
+		    pass: auth_pass
+		};
+		
+		$.ajax({cache: false, 
+			crossDomain: true,
+			// xhrFields: {
+			//     'withCredentials': true
+			// },
+			type: 'post', 
+			url: auth_url, 
+			contentType: 'application/json; charset=UTF-8',
+			data: JSON.stringify(params),
+			processData: false,
+			dataType: 'json'})
+		    .always(function(data_sign) {
+			// clone perche' non si tocca quello in lista op
+			var new_json = $.extend({}, json);
+			delete new_json.auth_endpoint;
+			
+			if (data_sign) {
+			    new_json.arg1 = params.user;
+			    new_json.arg2 = data_sign.data;
+			    new_json.arg3 = data_sign.sign;
+			}
+			
+			this.conn.send(JSON.stringify(new_json));
+		    }.bind(this));
+	    } else {
+		this.conn.send(JSON.stringify(json));
+	    }
+	};
+	
+	var set_user_data = function(json) {
+	    this.user_data = json;
+	};
+	
+	var stringify_op = function(code) {
+	    if (code == Xserv.BIND) {
+		return 'bind';
+	    } else if (code == Xserv.UNBIND) {
+		return 'unbind';
+	    } else if (code == Xserv.HISTORY) {
+		return 'history';
+	    } else if (code == Xserv.PRESENCE) {
+		return 'presence';
+	    } else if (code == Xserv.PRESENCE_IN) {
+		return 'presence_in';
+	    } else if (code == Xserv.PRESENCE_OUT) {
+		return 'presence_out';
+	    } else if (code == Xserv.TRIGGER) {
+		return 'trigger';
+	    }
+	};
+	
 	// public static
 	
-	Xserv.debug = function() {
-	    
+	Xserv.isPrivateTopic = function(topic) {
+	    return topic.charAt(0) == '@';
 	};
 	
 	// public
@@ -126,6 +194,55 @@
 	    }
 	};
 	
+	prototype.addEventListener = function(name, callback) {
+	    if (name == 'receive_events') {
+		var event_callback = function(event) {
+		    // intercetta solo i messaggi, eventi da http
+		    var json = JSON.parse(event.data);
+		    if (json.message) {
+			try {
+			    json.message = JSON.parse(json.message);
+			} catch(e) {}
+			
+			callback(json);
+		    }
+		}.bind(this);
+		
+		this.listeners.push({event: 'message', callback: event_callback});
+	    } else if (name == 'receive_ops_response') {
+		var event_callback = function(event) {
+		    // intercetta solo gli op_response, eventi su comandi
+		    var json = JSON.parse(event.data);
+		    if (json.op) {
+			json.name = stringify_op(json.op); 
+			try {
+			    var data = Xserv.Base64.decode(json.data); // decode
+			    data = JSON.parse(data);
+			    json.data = data;
+			    
+			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				if (Xserv.Utils.is_object(json.data)) {
+				    set_user_data.bind(this)(json.data);
+				}
+			    }
+			} catch(e) {
+			    console.log(e);
+			}
+			
+			callback(json);
+		    }
+		}.bind(this);
+		
+		this.listeners.push({event: 'message', callback: event_callback});
+	    } else if (name == 'open_connection') {
+		this.listeners.push({event: 'open', callback: callback});
+	    } else if (name == 'close_connection') {
+		this.listeners.push({event: 'close', callback: callback});
+	    } else if (name == 'error_connection') {
+		this.listeners.push({event: 'error', callback: callback});
+	    }
+	};
+	
 	prototype.setReconnectInterval = function(milliseconds) {
 	    this.reconnect_interval = milliseconds;
 	};
@@ -138,6 +255,87 @@
 	    return this.user_data;
 	};
 	
+	prototype.trigger = function(topic, event, message) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    if (!Xserv.Utils.is_string(message) && Xserv.Utils.is_object(message)) {
+		message = JSON.stringify(message);
+	    }
+	    send.bind(this)({uuid: uuid, 
+			     op: Xserv.TRIGGER, 
+			     topic: topic, 
+			     event: event,
+			     arg1: message});
+	    return uuid;
+	};
+	
+	prototype.bind = function(topic, event, auth_endpoint) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    var tmp = {uuid: uuid,
+		       op: Xserv.BIND, 
+		       topic: topic, 
+		       event: event};
+	    if (auth_endpoint) {
+		tmp.auth_endpoint = auth_endpoint;
+	    }
+	    send.bind(this)(tmp);
+	    return uuid;
+	};
+	
+	prototype.unbind = function(topic, event) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    event = event || '';
+	    send.bind(this)({uuid: uuid,
+			     op: Xserv.UNBIND, 
+			     topic: topic, 
+			     event: event});
+	    return uuid;
+	};
+	
+	prototype.historyById = function(topic, event, offset, limit) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    send.bind(this)({uuid: uuid,
+			     op: Xserv.HISTORY, 
+			     topic: topic, 
+			     event: event,
+			     arg1: Xserv.HISTORY_ID,
+			     arg2: String(offset),
+			     arg3: String(limit)});
+	    return uuid;
+	};
+	
+	prototype.historyByTimestamp = function(topic, event, offset, limit) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    send.bind(this)({uuid: uuid,
+			     op: Xserv.HISTORY, 
+			     topic: topic, 
+			     event: event, 
+			     arg1: Xserv.HISTORY_TIMESTAMP, 
+			     arg2: String(offset), 
+			     arg3: String(limit)});
+	    return uuid;
+	};
+	
+	prototype.presence = function(topic, event) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    send.bind(this)({uuid: uuid,
+			     op: Xserv.PRESENCE, 
+			     topic: topic, 
+			     event: event});
+	    return uuid;
+	};
+	
 	this.Xserv = Xserv;
 	
     }).call(this);
@@ -145,12 +343,25 @@
     (function () {
 	
 	Xserv.Utils = {
+	    
 	    format: function(str, args) {
 		var strX = str;
 		for (var i in args) {
 		    strX = strX.replace(new RegExp('\\' + i, 'g'), args[i]);
 		}
 		return strX;
+	    },
+	    
+	    is_string: function(value) {
+		return typeof value === 'string';
+	    },
+	    
+	    is_object: function(value) {
+		return typeof value === 'object';
+	    },
+	    
+	    is_array: function(value) {
+		return Object.prototype.toString.call(value) === '[object Array]';
 	    },
 	    
 	    generateUUID: function() {
@@ -235,6 +446,8 @@
 		return {browser: browserName + ' ' + fullVersion, os: os};
 	    }
 	};
+	
+	Xserv.Base64 = {_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}};
 	
     }).call(this);
     
