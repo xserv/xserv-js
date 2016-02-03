@@ -2,6 +2,8 @@
   <img src="http://mobile-italia.com/xserv/assets/images/logo-big.png?t=1" alt="Xserv" title="Xserv">
 </p>
 
+<br>
+
 This library is client that allows Javascript web browser clients to connect to the [Xserv](http://mobile-italia.com/xserv/) WebSocket API.<br>
 [Xserv](http://mobile-italia.com/xserv/) is a platform of real-time bi-directional messaging via WebSockets to web and mobile apps, or any other Internet connected device.
 
