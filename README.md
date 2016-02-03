@@ -13,7 +13,7 @@ Xserv JS is a simple client library integrating real-time bi-directional messagi
 
 ## Installation
 
-#### CDN
+### CDN
 
 Via the Xserv CDN:
 
