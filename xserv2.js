@@ -112,11 +112,11 @@
 	    }
 	};
 	
-	var set_user_data = function(json) {
+	var setUserData = function(json) {
 	    this.user_data = json;
 	};
 	
-	var stringify_op = function(code) {
+	var stringifyOp = function(code) {
 	    if (code == Xserv.BIND) {
 		return 'bind';
 	    } else if (code == Xserv.UNBIND) {
@@ -215,15 +215,15 @@
 		    // intercetta solo gli op_response, eventi su comandi
 		    var json = JSON.parse(event.data);
 		    if (json.op) {
-			json.name = stringify_op(json.op); 
+			json.name = stringifyOp(json.op); 
 			try {
 			    var data = Xserv.Utils.Base64.decode(json.data); // decode
 			    data = JSON.parse(data);
 			    json.data = data;
 			    
 			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				if (Xserv.Utils.is_object(json.data)) {
-				    set_user_data.bind(this)(json.data);
+				if (Xserv.Utils.isObject(json.data)) {
+				    setUserData.bind(this)(json.data);
 				}
 			    }
 			} catch(e) {
@@ -259,7 +259,7 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    if (!Xserv.Utils.is_string(message) && Xserv.Utils.is_object(message)) {
+	    if (!Xserv.Utils.isString(message) && Xserv.Utils.isObject(message)) {
 		message = JSON.stringify(message);
 	    }
 	    send.bind(this)({uuid: uuid, 
@@ -352,15 +352,15 @@
 		return strX;
 	    },
 	    
-	    is_string: function(value) {
+	    isString: function(value) {
 		return typeof value === 'string';
 	    },
 	    
-	    is_object: function(value) {
+	    isObject: function(value) {
 		return typeof value === 'object';
 	    },
 	    
-	    is_array: function(value) {
+	    isArray: function(value) {
 		return Object.prototype.toString.call(value) === '[object Array]';
 	    },
 	    
