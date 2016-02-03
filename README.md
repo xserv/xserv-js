@@ -13,7 +13,7 @@ Choose Xserv for your next project, or migrate over your existing projects—you
 
 ## Installation
 
-### CDN
+#### CDN
 
 Via the Xserv CDN:
 
