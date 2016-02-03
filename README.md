@@ -13,9 +13,11 @@ Choose Xserv for your next project, or migrate over your existing projects—you
 
 ## Installation
 
-Include in your page jQuery and Xserv library.
+### CDN
 
-```
+Via the Xserv CDN:
+
+```html
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="http://mobile-italia.com/xserv/xserv.min.js"></script>
 ```
