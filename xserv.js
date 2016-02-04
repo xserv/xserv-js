@@ -48,11 +48,11 @@
 	};
 	
 	var sendStat = function() {
-	    var bw = Xserv.Utils.getInfoBrowser();
+	    var bw = Xserv.Utils.getBrowser();
 	    var tz = Xserv.Utils.getTimeZoneData();
 	    
-	    var model = bw.browser || '';
-	    var os = bw.os || '';
+	    var model = bw || '';
+	    var os = 'Browser';
 	    if (model.length > 45) {
 		model = model.substring(0, 45);
 	    }
@@ -383,10 +383,10 @@
 		return {tz_offset: -1 * parseInt(today.getTimezoneOffset() / 60), tz_dst: +dst};
 	    },
 	    
-	    getInfoBrowser: function() {
+	    getBrowser: function() {
 		var nAgt = navigator.userAgent;
-		var browserName  = navigator.appName;
-		var fullVersion  = ''+parseFloat(navigator.appVersion); 
+		var browserName = navigator.appName;
+		var fullVersion = ''+parseFloat(navigator.appVersion); 
 		var nameOffset, verOffset, ix;
 		
 		// In Opera, the true version is after "Opera" or after "Version"
@@ -419,7 +419,7 @@
 		    fullVersion = nAgt.substring(verOffset+8);
 		}
 		// In most other browsers, "name/version" is at the end of userAgent 
-		else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+		else if ((nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/'))) {
 		    browserName = nAgt.substring(nameOffset,verOffset);
 		    fullVersion = nAgt.substring(verOffset+1);
 		    if (browserName.toLowerCase()==browserName.toUpperCase()) {
@@ -428,22 +428,16 @@
 		}
 		// trim the fullVersion string at semicolon/space if present
 		if ((ix=fullVersion.indexOf(';'))!=-1)
-		    fullVersion=fullVersion.substring(0,ix);
+		    fullVersion = fullVersion.substring(0,ix);
 		if ((ix=fullVersion.indexOf(' '))!=-1)
-		    fullVersion=fullVersion.substring(0,ix);
+		    fullVersion = fullVersion.substring(0,ix);
 		
 		var majorVersion = parseInt(''+fullVersion,10);
 		if (isNaN(majorVersion)) {
-		    fullVersion  = ''+parseFloat(navigator.appVersion); 
+		    fullVersion = ''+parseFloat(navigator.appVersion); 
 		}
 		
-		var os = 'Unknown';
-		try {
-		    os = nAgt.split('(')[1].split(')')[0];
-		} catch(e) {
-		}
-		
-		return {browser: browserName + ' ' + fullVersion, os: os};
+		return browserName + ' ' + fullVersion;
 	    }
 	    
 	};
