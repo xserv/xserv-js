@@ -20,7 +20,7 @@ Via the Xserv CDN:
 
 ```html
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="http://mobile-italia.com/xserv/xserv.min.js"></script> <!-- xserv-1.0.0.min.js -->
+<script src="http://mobile-italia.com/xserv/xserv.min.js"></script> <!-- or xserv-<ver>.min.js -->
 ```
 
 ## Credits
