@@ -59,12 +59,14 @@
 	    if (os.length > 45) {
 		os = os.substring(0, 45);
 	    }
+	    var lang = navigator.language || navigator.userLanguage;
 	    
 	    var stat = {uuid: this.instanceUUID,
 			model: model,
 			os: os,
 			tz_offset: tz.tz_offset,
-			tz_dst: tz.tz_dst};
+			tz_dst: tz.tz_dst,
+	                lang: lang};
 	    this.conn.send(JSON.stringify(stat));
 	};
 	
