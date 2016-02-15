@@ -60,6 +60,7 @@
 		os = os.substring(0, 45);
 	    }
 	    var lang = navigator.language || navigator.userLanguage;
+	    lang = lang.replace('_', '-');
 	    
 	    var stat = {uuid: this.instanceUUID,
 			model: model,
