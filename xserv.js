@@ -73,7 +73,7 @@
 	var send = function(json) {
 	    if (!this.isConnected()) return;
 	    
-	    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.auth_endpoint) {
+	    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.auth_endpoint) {
 		var auth_url = json.auth_endpoint.endpoint || 
 		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id});
 		var auth_user = json.auth_endpoint.user || '';
@@ -119,20 +119,20 @@
 	};
 	
 	var stringifyOp = function(code) {
-	    if (code == Xserv.BIND) {
-		return 'bind';
-	    } else if (code == Xserv.UNBIND) {
-		return 'unbind';
-	    } else if (code == Xserv.HISTORY) {
+	    if (code == Xserv.OP_SUBSCRIBE) {
+		return 'subscribe';
+	    } else if (code == Xserv.OP_UNSUBSCRIBE) {
+		return 'unsubscribe';
+	    } else if (code == Xserv.OP_HISTORY) {
 		return 'history';
-	    } else if (code == Xserv.PRESENCE) {
+	    } else if (code == Xserv.OP_PRESENCE) {
 		return 'presence';
-	    } else if (code == Xserv.PRESENCE_IN) {
-		return 'presence_in';
-	    } else if (code == Xserv.PRESENCE_OUT) {
-		return 'presence_out';
-	    } else if (code == Xserv.TRIGGER) {
-		return 'trigger';
+	    } else if (code == Xserv.OP_JOIN) {
+		return 'join';
+	    } else if (code == Xserv.OP_LEAVE) {
+		return 'leave';
+	    } else if (code == Xserv.OP_PUBLISH) {
+		return 'publish';
 	    }
 	};
 	
@@ -223,7 +223,7 @@
 			    data = JSON.parse(data);
 			    json.data = data;
 			    
-			    if (json.op == Xserv.BIND && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
 				if (Xserv.Utils.isObject(json.data)) {
 				    setUserData.bind(this)(json.data);
 				}
@@ -257,7 +257,7 @@
 	    return this.user_data;
 	};
 	
-	prototype.trigger = function(topic, event, message) {
+	prototype.publish = function(topic, event, message) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
@@ -265,19 +265,19 @@
 		message = JSON.stringify(message);
 	    }
 	    send.bind(this)({uuid: uuid, 
-			     op: Xserv.TRIGGER, 
+			     op: Xserv.OP_PUBLISH, 
 			     topic: topic, 
 			     event: event,
 			     arg1: message});
 	    return uuid;
 	};
 	
-	prototype.bind = function(topic, event, auth_endpoint) {
+	prototype.subscribe = function(topic, event, auth_endpoint) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    var tmp = {uuid: uuid,
-		       op: Xserv.BIND, 
+		       op: Xserv.OP_SUBSCRIBE, 
 		       topic: topic, 
 		       event: event};
 	    if (auth_endpoint) {
@@ -287,13 +287,13 @@
 	    return uuid;
 	};
 	
-	prototype.unbind = function(topic, event) {
+	prototype.unsubscribe = function(topic, event) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    event = event || '';
 	    send.bind(this)({uuid: uuid,
-			     op: Xserv.UNBIND, 
+			     op: Xserv.OP_UNSUBSCRIBE, 
 			     topic: topic, 
 			     event: event});
 	    return uuid;
@@ -304,7 +304,7 @@
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
-			     op: Xserv.HISTORY, 
+			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
 			     event: event,
 			     arg1: Xserv.HISTORY_ID,
@@ -318,7 +318,7 @@
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
-			     op: Xserv.HISTORY, 
+			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
 			     event: event, 
 			     arg1: Xserv.HISTORY_TIMESTAMP, 
@@ -332,7 +332,7 @@
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
-			     op: Xserv.PRESENCE, 
+			     op: Xserv.OP_PRESENCE, 
 			     topic: topic, 
 			     event: event});
 	    return uuid;
@@ -458,22 +458,21 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	// Xserv.ADDRESS = '192.168.1.130';
-	Xserv.ADDRESS = 'xserv.mobile-italia.com';
+	Xserv.ADDRESS = '192.168.130.153';
+	// Xserv.ADDRESS = 'xserv.mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.URL = 'ws://$1:$2/ws/$3';
 	Xserv.DEFAULT_AUTH_URL = 'http://$1:$2/app/$3/auth_user';
 	Xserv.DEFAULT_RI = 5000;
 	
 	// events:op op
-	Xserv.TRIGGER = 200;
-	Xserv.BIND = 201;
-	Xserv.UNBIND = 202;
-	Xserv.HISTORY = 203;
-	Xserv.PRESENCE = 204;
-	// in uso in presence
-	Xserv.PRESENCE_IN = Xserv.BIND + 200;
-	Xserv.PRESENCE_OUT = Xserv.UNBIND + 200;
+	Xserv.OP_PUBLISH = 200;
+	Xserv.OP_SUBSCRIBE = 201;
+	Xserv.OP_UNSUBSCRIBE = 202;
+	Xserv.OP_HISTORY = 203;
+	Xserv.OP_PRESENCE = 204;
+	Xserv.OP_JOIN = Xserv.OP_SUBSCRIBE + 200;
+	Xserv.OP_LEAVE = Xserv.OP_UNSUBSCRIBE + 200;
 	// in uso in history
 	Xserv.HISTORY_ID = 'id';
 	Xserv.HISTORY_TIMESTAMP = 'timestamp';
@@ -481,7 +480,7 @@
 	Xserv.RC_OK = 1;
 	Xserv.RC_GENERIC_ERROR = 0;
 	Xserv.RC_ARGS_ERROR = -1;
-	Xserv.RC_ALREADY_BINDED = -2;
+	Xserv.RC_ALREADY_SUBSCRIBED = -2;
 	Xserv.RC_UNAUTHORIZED = -3;
 	Xserv.RC_NO_EVENT = -4;
 	Xserv.RC_NO_DATA = -5;
