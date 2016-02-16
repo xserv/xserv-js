@@ -82,7 +82,7 @@
 	    $("#state").attr("fill", "red");
 	});
 	
-	xserv.addEventListener("receive_msgs", function(json) {
+	xserv.addEventListener("receive_messages", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
             $(html).hide().prependTo("#output").fadeIn(1000);
             // alert(json.message);
