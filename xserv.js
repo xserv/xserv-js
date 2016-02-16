@@ -198,13 +198,13 @@
 	};
 	
 	prototype.addEventListener = function(name, callback) {
-	    if (name == 'receive_events') {
+	    if (name == 'receive_msgs') {
 		var event_callback = function(event) {
 		    // intercetta solo i messaggi, eventi da http
 		    var json = JSON.parse(event.data);
-		    if (json.message) {
+		    if (!json.op) {
 			try {
-			    json.message = JSON.parse(json.message);
+			    json.data = JSON.parse(json.data);
 			} catch(e) {
 			}
 			
@@ -258,29 +258,27 @@
 	    return this.user_data;
 	};
 	
-	prototype.publish = function(topic, event, message) {
+	prototype.publish = function(topic, data) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    if (!Xserv.Utils.isString(message) && Xserv.Utils.isObject(message)) {
-		message = JSON.stringify(message);
+	    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
+		data = JSON.stringify(data);
 	    }
 	    send.bind(this)({uuid: uuid, 
 			     op: Xserv.OP_PUBLISH, 
 			     topic: topic, 
-			     event: event,
-			     arg1: message});
+			     arg1: data});
 	    return uuid;
 	};
 	
-	prototype.subscribe = function(topic, event, auth_endpoint) {
+	prototype.subscribe = function(topic, auth_endpoint) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_SUBSCRIBE, 
-		       topic: topic, 
-		       event: event};
+		       topic: topic};
 	    if (auth_endpoint) {
 		tmp.auth_endpoint = auth_endpoint;
 	    }
@@ -288,54 +286,49 @@
 	    return uuid;
 	};
 	
-	prototype.unsubscribe = function(topic, event) {
+	prototype.unsubscribe = function(topic) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    event = event || '';
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_UNSUBSCRIBE, 
-			     topic: topic, 
-			     event: event});
+			     topic: topic});
 	    return uuid;
 	};
 	
-	prototype.historyById = function(topic, event, offset, limit) {
+	prototype.historyById = function(topic, offset, limit) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
-			     event: event,
 			     arg1: Xserv.HISTORY_ID,
 			     arg2: String(offset),
 			     arg3: String(limit)});
 	    return uuid;
 	};
 	
-	prototype.historyByTimestamp = function(topic, event, offset, limit) {
+	prototype.historyByTimestamp = function(topic, offset, limit) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
-			     event: event, 
 			     arg1: Xserv.HISTORY_TIMESTAMP, 
 			     arg2: String(offset), 
 			     arg3: String(limit)});
 	    return uuid;
 	};
 	
-	prototype.presence = function(topic, event) {
+	prototype.presence = function(topic) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_PRESENCE, 
-			     topic: topic, 
-			     event: event});
+			     topic: topic});
 	    return uuid;
 	};
 	
@@ -466,7 +459,7 @@
 	Xserv.DEFAULT_AUTH_URL = 'http://$1:$2/app/$3/auth_user';
 	Xserv.DEFAULT_RI = 5000;
 	
-	// events:op op
+	// op
 	Xserv.OP_PUBLISH = 200;
 	Xserv.OP_SUBSCRIBE = 201;
 	Xserv.OP_UNSUBSCRIBE = 202;
@@ -477,15 +470,16 @@
 	// in uso in history
 	Xserv.HISTORY_ID = 'id';
 	Xserv.HISTORY_TIMESTAMP = 'timestamp';
-	// events:op result_code
+	// op result_code
 	Xserv.RC_OK = 1;
 	Xserv.RC_GENERIC_ERROR = 0;
 	Xserv.RC_ARGS_ERROR = -1;
 	Xserv.RC_ALREADY_SUBSCRIBED = -2;
 	Xserv.RC_UNAUTHORIZED = -3;
-	Xserv.RC_NO_EVENT = -4;
+	Xserv.RC_NO_TOPIC = -4;
 	Xserv.RC_NO_DATA = -5;
 	Xserv.RC_NOT_PRIVATE = -6;
+	Xserv.RC_LIMIT_MESSAGES = -7;
 	
     }).call(this);
     

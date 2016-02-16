@@ -12,12 +12,12 @@
     });
     
     // receive events data
-    xserv.addEventListener("receive_events", function(json) {
+    xserv.addEventListener("receive_messages", function(json) {
         alert(JSON.stringify(json));
     });
     
     xserv.addEventListener("open_connection", function() {
-        xserv.bind("my_topic", "my_event");
+        xserv.subscribe("my_topic");
     });
     
     xserv.connect();

@@ -22,8 +22,7 @@
     
     <p><button id="connect">Connect</button> <button id="disconnect">Disconnect</button> <button id="clear">Clear</button></p>
     
-    <p><input type="text" id="topic" placeholder="Topic"> <input type="text" id="event" placeholder="Event"> 
-      <input type="text" id="user" placeholder="User (private)"> <input type="text" id="pass" placeholder="Pass (private)"> 
+    <p><input type="text" id="topic" placeholder="Topic"> <input type="text" id="user" placeholder="User (private)"> <input type="text" id="pass" placeholder="Pass (private)"> 
       <button id="subscribe">Subscribe</button> <button id="private">Subscribe Private</button> <button id="unsubscribe">Unsubscribe</button> 
       <button id="presence">Presence</button></p>
     
@@ -32,9 +31,9 @@
     <p><input type="text" id="offset" placeholder="Offset"> <input type="text" id="limit" placeholder="Limit"> 
       <button id="history_i">History by ID</button> <button id="history_t">History by Timestamp</button></p>
     
-    <p>Operations response</p>
+    <p>Ops response</p>
     <pre id="output_op"></pre>
-    <p>Events</p>
+    <p>Messages</p>
     <pre id="output"></pre>
     
     <script>
@@ -51,25 +50,25 @@
         });
         
         $("#publish").click(function() {
-           xserv.publish($("#topic").val(), $("#event").val(), $("#message").val());
+           xserv.publish($("#topic").val(), $("#message").val());
         });
         $("#subscribe").click(function() {
-           xserv.subscribe($("#topic").val(), $("#event").val());
+           xserv.subscribe($("#topic").val());
         });
         $("#unsubscribe").click(function() {
-           xserv.unsubscribe($("#topic").val(), $("#event").val());
+           xserv.unsubscribe($("#topic").val());
         });
         $("#private").click(function() {
-           xserv.subscribe($("#topic").val(), $("#event").val(), {user:$("#user").val(), pass:$("#pass").val()}); // private
+           xserv.subscribe($("#topic").val(), {user:$("#user").val(), pass:$("#pass").val()}); // private
         });
         $("#presence").click(function() {
-           xserv.presence($("#topic").val(), $("#event").val());
+           xserv.presence($("#topic").val());
         });
         $("#history_i").click(function() {
-           xserv.historyById($("#topic").val(), $("#event").val(), $("#offset").val(), $("#limit").val());
+           xserv.historyById($("#topic").val(), $("#offset").val(), $("#limit").val());
         });
         $("#history_t").click(function() {
-           xserv.historyByTimestamp($("#topic").val(), $("#event").val(), $("#offset").val(), $("#limit").val());
+           xserv.historyByTimestamp($("#topic").val(), $("#offset").val(), $("#limit").val());
         });
         
 	var xserv = new Xserv("9Pf80-3"); // app_id
@@ -83,7 +82,7 @@
 	    $("#state").attr("fill", "red");
 	});
 	
-	xserv.addEventListener("receive_events", function(json) {
+	xserv.addEventListener("receive_msgs", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
             $(html).hide().prependTo("#output").fadeIn(1000);
             // alert(json.message);
