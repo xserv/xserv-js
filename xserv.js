@@ -88,7 +88,6 @@
 		    user: auth_user,
 		    pass: auth_pass
 		};
-		console.log(params);
 		
 		$.ajax({cache: false, 
 			crossDomain: true,
