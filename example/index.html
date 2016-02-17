@@ -74,14 +74,20 @@
 	var xserv = new Xserv("9Pf80-3"); // app_id
 	// xserv.setReconnectInterval(20000);
 	
-        xserv.addEventListener("open_connection", function(event) {
+        xserv.addEventListener("open_connection", function() {
            $("#state").attr("fill", "green");
 	});
 	
 	xserv.addEventListener("close_connection", function(event) {
+            // console.log(event);
 	    $("#state").attr("fill", "red");
 	});
-	
+        
+        xserv.addEventListener("error_connection", function(event) {
+            // console.log(event);
+	    $("#state").attr("fill", "yellow");
+	});
+        
 	xserv.addEventListener("receive_messages", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
             $(html).hide().prependTo("#output").fadeIn(1000);

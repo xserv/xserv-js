@@ -31,6 +31,8 @@
 	    this.app_id = app_id;
 	    this.conn = null;
 	    this.listeners = [];
+	    this.open_connection = null;
+	    this.error_connection = null;
 	    this.user_data = {};
 	    this.reconnect_interval = Xserv.DEFAULT_RI;
 	    this.instanceUUID = Xserv.Utils.generateUUID();
@@ -47,7 +49,7 @@
 		}.bind(this), this.reconnect_interval);
 	};
 	
-	var sendStat = function() {
+	var handshake = function() {
 	    var bw = Xserv.Utils.getBrowser();
 	    var tz = Xserv.Utils.getTimeZoneData();
 	    
@@ -63,7 +65,7 @@
 	    lang = lang.replace('_', '-');
 	    
 	    var stat = {uuid: this.instanceUUID,
-			model: model,
+			// model: model,
 			os: os,
 			tz_offset: tz.tz_offset,
 			tz_dst: tz.tz_dst,
@@ -134,7 +136,10 @@
 		return 'leave';
 	    } else if (code == Xserv.OP_PUBLISH) {
 		return 'publish';
+	    } else if (code == Xserv.OP_HANDSHAKE) {
+		return 'handshake';
 	    }
+	    return '';
 	};
 	
 	// public static
@@ -161,6 +166,8 @@
 		
 		// free
 		if (this.conn) {
+		    this.open_connection = null;
+		    this.error_connection = null;
 		    for (var i in this.listeners) {
 			this.conn.removeEventListener(this.listeners[i].event, this.listeners[i].callback);
 		    }
@@ -177,8 +184,7 @@
 		
 		// su connect
 		this.conn.onopen = function(event) {
-		    // stat
-		    sendStat.bind(this)();
+		    handshake.bind(this)();
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
@@ -218,30 +224,60 @@
 		    // intercetta solo gli op_response, eventi su comandi
 		    var json = JSON.parse(event.data);
 		    if (json.op) {
-			json.name = stringifyOp(json.op); 
-			try {
-			    var data = Xserv.Utils.Base64.decode(json.data); // decode
-			    data = JSON.parse(data);
-			    json.data = data;
-			    
-			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				if (Xserv.Utils.isObject(json.data)) {
-				    setUserData.bind(this)(json.data);
+			json.name = stringifyOp(json.op);
+			
+			if (json.op == Xserv.OP_HANDSHAKE) { // vera connection
+			    if (json.rc == Xserv.RC_OK) {
+				try {
+				    var data = Xserv.Utils.Base64.decode(json.data); // decode
+				    data = JSON.parse(data);
+				    
+				    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
+					setUserData.bind(this)(data);
+				    }
+				} catch(e) {
+				}
+				
+				if (!$.isEmptyObject(this.user_data)) {
+				    if (this.open_connection) {
+					this.open_connection();
+				    }
+				} else {
+				    if (this.error_connection) {
+					this.error_connection(json);
+				    }
+				}
+			    } else {
+				if (this.error_connection) {
+				    this.error_connection(json);
 				}
 			    }
-			} catch(e) {
+			} else {
+			    try {
+				var data = Xserv.Utils.Base64.decode(json.data); // decode
+				data = JSON.parse(data);
+				json.data = data;
+				
+				if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
+					setUserData.bind(this)(json.data);
+				    }
+				}
+			    } catch(e) {
+			    }
+			    
+			    callback(json);
 			}
-			
-			callback(json);
 		    }
 		}.bind(this);
 		
 		this.listeners.push({event: 'message', callback: event_callback});
 	    } else if (name == 'open_connection') {
-		this.listeners.push({event: 'open', callback: callback});
+		this.open_connection = callback;
 	    } else if (name == 'close_connection') {
 		this.listeners.push({event: 'close', callback: callback});
 	    } else if (name == 'error_connection') {
+		this.error_connection = callback;
 		this.listeners.push({event: 'error', callback: callback});
 	    }
 	};
@@ -452,12 +488,15 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	// Xserv.ADDRESS = '192.168.130.153';
-	Xserv.ADDRESS = 'xserv.mobile-italia.com';
+	Xserv.ADDRESS = '192.168.130.153';
+	// Xserv.ADDRESS = 'xserv.mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.URL = 'ws://$1:$2/ws/$3';
 	Xserv.DEFAULT_AUTH_URL = 'http://$1:$2/app/$3/auth_user';
 	Xserv.DEFAULT_RI = 5000;
+	
+	// signal
+	Xserv.OP_HANDSHAKE = 100;
 	
 	// op
 	Xserv.OP_PUBLISH = 200;
