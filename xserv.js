@@ -222,29 +222,50 @@
 		var event_callback = function(event) {
 		    // intercetta solo gli op_response, eventi su comandi
 		    var json = JSON.parse(event.data);
-		    if (json.op) {
+		    if (json.op && json.op != Xserv.OP_HANDSHAKE) {
 			json.name = stringifyOp(json.op);
 			
-			if (json.op == Xserv.OP_HANDSHAKE) { // vera connection
-			    if (json.rc == Xserv.RC_OK) {
-				try {
-				    var data = Xserv.Utils.Base64.decode(json.data); // decode
-				    data = JSON.parse(data);
-				    
-				    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
-					setUserData.bind(this)(data);
-				    }
-				} catch(e) {
+			try {
+			    var data = Xserv.Utils.Base64.decode(json.data); // decode
+			    data = JSON.parse(data);
+			    json.data = data;
+			    
+			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
+				    setUserData.bind(this)(json.data);
 				}
+			    }
+			} catch(e) {
+			}
+			
+			callback(json);
+		    }
+		}.bind(this);
+		
+		this.listeners.push({event: 'message', callback: event_callback});
+	    } else if (name == 'open_connection') {
+		this.open_connection = callback; // callback utente
+		
+		var event_callback = function(event) {
+		    // vera connection
+		    var json = JSON.parse(event.data);
+		    if (json.op && json.op == Xserv.OP_HANDSHAKE) {
+			json.name = stringifyOp(json.op);
+			
+			if (json.rc == Xserv.RC_OK) {
+			    try {
+				var data = Xserv.Utils.Base64.decode(json.data); // decode
+				data = JSON.parse(data);
 				
-				if (!$.isEmptyObject(this.user_data)) {
-				    if (this.open_connection) {
-					this.open_connection();
-				    }
-				} else {
-				    if (this.error_connection) {
-					this.error_connection(json);
-				    }
+				if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
+				    setUserData.bind(this)(data);
+				}
+			    } catch(e) {
+			    }
+			    
+			    if (!$.isEmptyObject(this.user_data)) {
+				if (this.open_connection) {
+				    this.open_connection();
 				}
 			    } else {
 				if (this.error_connection) {
@@ -252,27 +273,14 @@
 				}
 			    }
 			} else {
-			    try {
-				var data = Xserv.Utils.Base64.decode(json.data); // decode
-				data = JSON.parse(data);
-				json.data = data;
-				
-				if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
-					setUserData.bind(this)(json.data);
-				    }
-				}
-			    } catch(e) {
+			    if (this.error_connection) {
+				this.error_connection(json);
 			    }
-			    
-			    callback(json);
 			}
 		    }
 		}.bind(this);
 		
 		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'open_connection') {
-		this.open_connection = callback;
 	    } else if (name == 'close_connection') {
 		this.listeners.push({event: 'close', callback: callback});
 	    } else if (name == 'error_connection') {
