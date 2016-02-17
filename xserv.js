@@ -83,10 +83,12 @@
 		var auth_pass = json.auth_endpoint.pass || '';
 		
 		var params = {
+		    socket_id : this.getSocketId(),
 		    topic: json.topic,
 		    user: auth_user,
 		    pass: auth_pass
 		};
+		console.log(params);
 		
 		$.ajax({cache: false, 
 			crossDomain: true,
@@ -290,6 +292,10 @@
 	
 	prototype.getUserData = function() {
 	    return this.user_data;
+	};
+	
+	prototype.getSocketId = function() {
+	    return this.user_data.socket_id ? this.user_data.socket_id : '';
 	};
 	
 	prototype.publish = function(topic, data) {
