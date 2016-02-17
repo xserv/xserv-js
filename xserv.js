@@ -175,7 +175,7 @@
 		
 		// non esiste un reopen quindi va reinizializzato tutto e si deve gestire una
 		// lista anche degli addEventListener sulla socket
-		this.conn = new WebSocket(Xserv.Utils.format(Xserv.URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id}));
+		this.conn = new WebSocket(Xserv.Utils.format(Xserv.URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id, '$4':Xserv.VERSION}));
 		
 		for (var i in this.listeners) {
 		    this.conn.addEventListener(this.listeners[i].event, this.listeners[i].callback);
@@ -494,7 +494,7 @@
 	Xserv.ADDRESS = '192.168.130.153';
 	// Xserv.ADDRESS = 'xserv.mobile-italia.com';
 	Xserv.PORT = '4332';
-	Xserv.URL = 'ws://$1:$2/ws/$3?version=' + Xserv.VERSION;
+	Xserv.URL = 'ws://$1:$2/ws/$3?version=$4';
 	Xserv.DEFAULT_AUTH_URL = 'http://$1:$2/app/$3/auth_user';
 	Xserv.DEFAULT_RI = 5000;
 	
