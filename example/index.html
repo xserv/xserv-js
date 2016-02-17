@@ -76,6 +76,7 @@
 	
         xserv.addEventListener("open_connection", function() {
            $("#state").attr("fill", "green");
+           $("#info").text(JSON.stringify(xserv.getUserData()));
 	});
 	
 	xserv.addEventListener("close_connection", function(event) {
@@ -99,7 +100,7 @@
 	    $(html).hide().prependTo("#output_op").fadeIn(1000);
             
             if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK && Xserv.isPrivateTopic(json.topic)) {
-               $("#info").text(JSON.stringify(xserv.getUserData()));
+               $("#info").text(JSON.stringify(xserv.getUserData())); // more data
             }
             // alert(json.data);
 	});

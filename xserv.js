@@ -65,7 +65,7 @@
 	    lang = lang.replace('_', '-');
 	    
 	    var stat = {uuid: this.instanceUUID,
-			// model: model,
+			model: model,
 			os: os,
 			tz_offset: tz.tz_offset,
 			tz_dst: tz.tz_dst,
