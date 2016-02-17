@@ -166,8 +166,6 @@
 		
 		// free
 		if (this.conn) {
-		    this.open_connection = null;
-		    this.error_connection = null;
 		    for (var i in this.listeners) {
 			this.conn.removeEventListener(this.listeners[i].event, this.listeners[i].callback);
 		    }
