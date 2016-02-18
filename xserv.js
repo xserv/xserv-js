@@ -41,9 +41,11 @@
 	// private
 	
 	var reConnect = function() {
-	    setTimeout(function() { 
-		    this.connect(true); 
-		}.bind(this), this.reconnect_interval);
+	    if (this.is_auto_reconnect) {
+		setTimeout(function() { 
+			this.connect(true); 
+		    }.bind(this), this.reconnect_interval);
+	    }
 	};
 	
 	var handshake = function() {
@@ -180,9 +182,9 @@
 			this.close_connection(event);
 		    }
 		    
-		    if (this.is_auto_reconnect) {
-			reConnect.bind(this)();
-		    }
+		    // non chiamo reconnect perche' error
+		    // viene chiamata sempre prima della chiusura
+		    // della socket e solo un errore necessita una reconnect
 		}.bind(this);
 		
 		this.conn.onerror = function(event) {
@@ -190,9 +192,7 @@
 			this.error_connection(event);
 		    }
 		    
-		    if (this.is_auto_reconnect) {
-			reConnect.bind(this)();
-		    }
+		    reConnect.bind(this)();
 		}.bind(this);
 		
 		this.conn.onmessage = function(event) {
