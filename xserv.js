@@ -30,9 +30,6 @@
 	function Xserv(app_id) {
 	    this.app_id = app_id;
 	    this.conn = null;
-	    this.listeners = [];
-	    this.open_connection = null;
-	    this.error_connection = null;
 	    this.user_data = {};
 	    this.reconnect_interval = Xserv.DEFAULT_RI;
 	    this.instanceUUID = Xserv.Utils.generateUUID();
@@ -167,19 +164,11 @@
 		
 		// free
 		if (this.conn) {
-		    for (var i in this.listeners) {
-			this.conn.removeEventListener(this.listeners[i].event, this.listeners[i].callback);
-		    }
 		    delete this.conn;
 		}
 		
-		// non esiste un reopen quindi va reinizializzato tutto e si deve gestire una
-		// lista anche degli addEventListener sulla socket
+		// non esiste un reopen quindi va reinizializzato tutto
 		this.conn = new WebSocket(Xserv.Utils.format(Xserv.URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id, '$4':Xserv.VERSION}));
-		
-		for (var i in this.listeners) {
-		    this.conn.addEventListener(this.listeners[i].event, this.listeners[i].callback);
-		}
 		
 		// su connect
 		this.conn.onopen = function(event) {
@@ -187,9 +176,27 @@
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
+		    if (this.close_connection) {
+			this.close_connection(event);
+		    }
+		    
 		    if (this.is_auto_reconnect) {
 			reConnect.bind(this)();
 		    }
+		}.bind(this);
+		
+		this.conn.onerror = function(event) {
+		    if (this.error_connection) {
+			this.error_connection(event);
+		    }
+		    
+		    if (this.is_auto_reconnect) {
+			reConnect.bind(this)();
+		    }
+		}.bind(this);
+		
+		this.conn.onmessage = function(event) {
+		    manageMessage.bind(this)(event);
 		}.bind(this);
 	    }
 	};
@@ -203,55 +210,40 @@
 	};
 	
 	prototype.addEventListener = function(name, callback) {
-	    if (name == 'receive_messages') {
-		var event_callback = function(event) {
-		    // intercetta solo i messaggi, eventi da http
-		    var json = JSON.parse(event.data);
-		    if (!json.op) {
-			try {
-			    json.data = JSON.parse(json.data);
-			} catch(e) {
-			}
-			
-			callback(json);
-		    }
-		}.bind(this);
-		
-		this.listeners.push({event: 'message', callback: event_callback});
+	    if (name == 'open_connection') {
+		this.open_connection = callback;
+	    } else if (name == 'close_connection') {
+		this.close_connection = callback;
+	    } else if (name == 'error_connection') {
+		this.error_connection = callback;
 	    } else if (name == 'receive_ops_response') {
-		var event_callback = function(event) {
-		    // intercetta solo gli op_response, eventi su comandi
-		    var json = JSON.parse(event.data);
-		    if (json.op && json.op != Xserv.OP_HANDSHAKE) {
-			json.name = stringifyOp(json.op);
-			
-			try {
-			    var data = Xserv.Utils.Base64.decode(json.data); // decode
-			    data = JSON.parse(data);
-			    json.data = data;
-			    
-			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
-				    setUserData.bind(this)(json.data);
-				}
-			    }
-			} catch(e) {
-			}
-			
-			callback(json);
+		this.receive_ops_response = callback;
+	    } else if (name == 'receive_messages') {
+		this.receive_messages = callback;
+	    }
+	};
+	
+	var manageMessage = function(event) {
+	    var json = null;
+	    try {
+		json = JSON.parse(event.data);
+	    } catch(e) {
+	    }
+	    
+	    if (json) {
+		if (!json.op) {
+		    try {
+			json.data = JSON.parse(json.data);
+		    } catch(e) {
 		    }
-		}.bind(this);
-		
-		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'open_connection') {
-		this.open_connection = callback; // callback utente
-		
-		var event_callback = function(event) {
-		    // vera connection
-		    var json = JSON.parse(event.data);
-		    if (json.op && json.op == Xserv.OP_HANDSHAKE) {
-			json.name = stringifyOp(json.op);
-			
+		    
+		    if (this.receive_messages) {
+			this.receive_messages(json);
+		    }
+		} else if (json.op) {
+		    json.name = stringifyOp(json.op);
+		    
+		    if (json.op == Xserv.OP_HANDSHAKE) {
 			if (json.rc == Xserv.RC_OK) {
 			    try {
 				var data = Xserv.Utils.Base64.decode(json.data); // decode
@@ -277,15 +269,25 @@
 				this.error_connection(json);
 			    }
 			}
+		    } else {
+			try {
+			    var data = Xserv.Utils.Base64.decode(json.data); // decode
+			    data = JSON.parse(data);
+			    json.data = data;
+			    
+			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
+				    setUserData.bind(this)(json.data);
+				}
+			    }
+			} catch(e) {
+			}
+			
+			if (this.receive_ops_response) {
+			    this.receive_ops_response(json);
+			}
 		    }
-		}.bind(this);
-		
-		this.listeners.push({event: 'message', callback: event_callback});
-	    } else if (name == 'close_connection') {
-		this.listeners.push({event: 'close', callback: callback});
-	    } else if (name == 'error_connection') {
-		this.error_connection = callback;
-		this.listeners.push({event: 'error', callback: callback});
+		}
 	    }
 	};
 	
