@@ -510,7 +510,7 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	Xserv.ADDRESS = '192.168.130.153';
+	Xserv.ADDRESS = '192.168.1.131';
 	// Xserv.ADDRESS = 'xserv.mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.URL = 'ws://$1:$2/ws/$3?version=$4';
