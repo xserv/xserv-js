@@ -24,7 +24,7 @@
     
     <p><input type="text" id="topic" placeholder="Topic"> <input type="text" id="user" placeholder="User (private)"> <input type="text" id="pass" placeholder="Pass (private)"> 
       <button id="subscribe">Subscribe</button> <button id="private">Subscribe Private</button> <button id="unsubscribe">Unsubscribe</button> 
-      <button id="presence">Presence</button></p>
+      <button id="presence">Presence</button> <button id="topics">Topics</button></p>
     
     <p><input type="text" id="message" placeholder="Message"> <button id="publish">Publish</button></p>
     
@@ -63,6 +63,9 @@
         });
         $("#presence").click(function() {
            xserv.presence($("#topic").val());
+        });
+        $("#topics").click(function() {
+           xserv.topics();
         });
         $("#history_i").click(function() {
            xserv.historyById($("#topic").val(), $("#offset").val(), $("#limit").val());

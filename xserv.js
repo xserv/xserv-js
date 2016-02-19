@@ -138,6 +138,8 @@
 		return 'publish';
 	    } else if (code == Xserv.OP_HANDSHAKE) {
 		return 'handshake';
+	    } else if (code == Xserv.OP_TOPICS) {
+		return 'topics';
 	    }
 	    return '';
 	};
@@ -182,17 +184,14 @@
 			this.close_connection(event);
 		    }
 		    
-		    // non chiamo reconnect perche' error
-		    // viene chiamata sempre prima della chiusura
-		    // della socket e solo un errore necessita una reconnect
+		    // viene chiamata sempre prima della chiusura della socket
+		    reConnect.bind(this)();
 		}.bind(this);
 		
 		this.conn.onerror = function(event) {
 		    if (this.error_connection) {
 			this.error_connection(event);
 		    }
-		    
-		    reConnect.bind(this)();
 		}.bind(this);
 		
 		this.conn.onmessage = function(event) {
@@ -381,6 +380,16 @@
 	    return uuid;
 	};
 	
+	prototype.topics = function() {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    var tmp = {uuid: uuid,
+		       op: Xserv.OP_TOPICS};
+	    send.bind(this)(tmp);
+	    return uuid;
+	};
+	
 	this.Xserv = Xserv;
 	
     }).call(this);
@@ -501,8 +510,8 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	// Xserv.ADDRESS = '192.168.130.153';
-	Xserv.ADDRESS = 'xserv.mobile-italia.com';
+	Xserv.ADDRESS = '192.168.130.153';
+	// Xserv.ADDRESS = 'xserv.mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.URL = 'ws://$1:$2/ws/$3?version=$4';
 	Xserv.DEFAULT_AUTH_URL = 'http://$1:$2/app/$3/auth_user';
@@ -517,6 +526,7 @@
 	Xserv.OP_UNSUBSCRIBE = 202;
 	Xserv.OP_HISTORY = 203;
 	Xserv.OP_PRESENCE = 204;
+	Xserv.OP_TOPICS = 205;
 	Xserv.OP_JOIN = Xserv.OP_SUBSCRIBE + 200;
 	Xserv.OP_LEAVE = Xserv.OP_UNSUBSCRIBE + 200;
 	// in uso in history
