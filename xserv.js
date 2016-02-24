@@ -34,6 +34,10 @@
 	    this.reconnect_interval = Xserv.DEFAULT_RI;
 	    this.instanceUUID = Xserv.Utils.generateUUID();
 	    this.is_auto_reconnect = false;
+	    this.secure = false;
+	    if (window.location.protocol == "https:") {
+		this.secure = true;
+	    }
 	}
 	
 	var prototype = Xserv.prototype;
@@ -77,7 +81,10 @@
 	    
 	    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.auth_endpoint) {
 		var auth_url = json.auth_endpoint.endpoint || 
-		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id});
+		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1': this.secure ? 's' : '', 
+								'$2': Xserv.ADDRESS, 
+								'$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
+								'$4': this.app_id});
 		var auth_user = json.auth_endpoint.user || '';
 		var auth_pass = json.auth_endpoint.pass || '';
 		
@@ -172,7 +179,11 @@
 		}
 		
 		// non esiste un reopen quindi va reinizializzato tutto
-		this.conn = new WebSocket(Xserv.Utils.format(Xserv.URL, {'$1':Xserv.ADDRESS, '$2':Xserv.PORT, '$3':this.app_id, '$4':Xserv.VERSION}));
+		this.conn = new WebSocket(Xserv.Utils.format(Xserv.URL, {'$1': this.secure ? 's' : '', 
+									 '$2': Xserv.ADDRESS, 
+									 '$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
+									 '$4': this.app_id, 
+									 '$5': Xserv.VERSION}));
 		
 		// su connect
 		this.conn.onopen = function(event) {
@@ -511,10 +522,11 @@
 	Xserv.VERSION = '1.0.0';
 	
 	// Xserv.ADDRESS = '192.168.130.153';
-	Xserv.ADDRESS = 'xserv.mobile-italia.com';
+	Xserv.ADDRESS = 'mobile-italia.com';
 	Xserv.PORT = '4332';
-	Xserv.URL = 'ws://$1:$2/ws/$3?version=$4';
-	Xserv.DEFAULT_AUTH_URL = 'http://$1:$2/app/$3/auth_user';
+	Xserv.TLS_PORT = '8332';
+	Xserv.URL = 'ws$1://$2:$3/ws/$4?version=$5';
+	Xserv.DEFAULT_AUTH_URL = 'http$1://$2:$3/app/$4/auth_user';
 	Xserv.DEFAULT_RI = 5000;
 	
 	// signal
