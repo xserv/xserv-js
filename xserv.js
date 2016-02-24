@@ -40,8 +40,8 @@
 	    if (window.location.protocol == "https:") {
 		this.secure = true;
 	    }
-	    if (force_tls) {
-		this.secure = true;
+	    if (force_tls != null) {
+		this.secure = force_tls;
 	    }
 	}
 	
