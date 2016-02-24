@@ -27,15 +27,20 @@
     
     (function () {
 	
-	function Xserv(app_id) {
+	function Xserv(app_id, force_tls) {
 	    this.app_id = app_id;
 	    this.conn = null;
 	    this.user_data = {};
 	    this.reconnect_interval = Xserv.DEFAULT_RI;
 	    this.instanceUUID = Xserv.Utils.generateUUID();
 	    this.is_auto_reconnect = false;
+	    
+	    // TLS
 	    this.secure = false;
 	    if (window.location.protocol == "https:") {
+		this.secure = true;
+	    }
+	    if (force_tls) {
 		this.secure = true;
 	    }
 	}
