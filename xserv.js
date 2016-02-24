@@ -27,7 +27,7 @@
     
     (function () {
 	
-	function Xserv(app_id, force_tls) {
+	function Xserv(app_id, security) {
 	    this.app_id = app_id;
 	    this.conn = null;
 	    this.user_data = {};
@@ -40,8 +40,8 @@
 	    if (window.location.protocol == "https:") {
 		this.secure = true;
 	    }
-	    if (force_tls != null) {
-		this.secure = force_tls;
+	    if (security != null) {
+		this.secure = security;
 	    }
 	}
 	
