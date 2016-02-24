@@ -535,8 +535,7 @@
 	Xserv.DEFAULT_RI = 5000;
 	
 	// signal
-	Xserv.OP_HANDSHAKE = 100;
-	
+	Xserv.OP_HANDSHAKE = 100;	
 	// op
 	Xserv.OP_PUBLISH = 200;
 	Xserv.OP_SUBSCRIBE = 201;
