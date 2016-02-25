@@ -27,22 +27,15 @@
     
     (function () {
 	
-	function Xserv(app_id, security) {
+	function Xserv(app_id) {
 	    this.app_id = app_id;
 	    this.conn = null;
 	    this.user_data = {};
 	    this.reconnect_interval = Xserv.DEFAULT_RI;
 	    this.instanceUUID = Xserv.Utils.generateUUID();
 	    this.is_auto_reconnect = false;
-	    
 	    // TLS
-	    this.secure = false;
-	    if (window.location.protocol == "https:") {
-		this.secure = true;
-	    }
-	    if (security != null) {
-		this.secure = security;
-	    }
+	    this.secure = true;
 	}
 	
 	var prototype = Xserv.prototype;
@@ -163,6 +156,10 @@
 	};
 	
 	// public
+	
+	prototype.disableTLS = function() {
+	    this.secure = false;
+	};
 	
 	prototype.isConnected = function() {
 	    return this.conn && this.conn.readyState == WebSocket.OPEN;
