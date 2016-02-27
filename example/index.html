@@ -59,7 +59,12 @@
            xserv.unsubscribe($("#topic").val());
         });
         $("#private").click(function() {
-           xserv.subscribe($("#topic").val(), {user:$("#user").val(), pass:$("#pass").val()}); // private
+           // private
+           xserv.subscribe($("#topic").val(),
+           {
+              params: {user:$("#user").val(), 
+                       pass:$("#pass").val()}
+           });
         });
         $("#presence").click(function() {
            xserv.presence($("#topic").val());
@@ -74,7 +79,7 @@
            xserv.historyByTimestamp($("#topic").val(), $("#offset").val(), $("#limit").val());
         });
         
-	var xserv = new Xserv("9Pf80-3"); // app_id
+        var xserv = new Xserv("9Pf80-3");
 	// xserv.setReconnectInterval(20000);
 	
         xserv.addEventListener("open_connection", function() {

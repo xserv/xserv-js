@@ -77,37 +77,33 @@
 	var send = function(json) {
 	    if (!this.isConnected()) return;
 	    
-	    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.auth_endpoint) {
-		var auth_url = json.auth_endpoint.endpoint || 
+	    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.auth) {
+		var auth_url = json.auth.endpoint || 
 		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1': this.secure ? 's' : '', 
 								'$2': Xserv.ADDRESS, 
 								'$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
 								'$4': this.app_id});
-		var auth_user = json.auth_endpoint.user || '';
-		var auth_pass = json.auth_endpoint.pass || '';
 		
-		var params = {
+		var headers = json.auth.headers || {};
+		var params = json.auth.params || {};
+		var payload = $.extend({
 		    socket_id : this.getSocketId(),
-		    topic: json.topic,
-		    user: auth_user,
-		    pass: auth_pass
-		};
+		    topic: json.topic
+		}, params);
 		
 		$.ajax({cache: false, 
 			crossDomain: true,
-			// xhrFields: {
-			//     'withCredentials': true
-			// },
 			type: 'post', 
-			url: auth_url, 
+			url: auth_url,
+			headers: headers,
 			contentType: 'application/json; charset=UTF-8',
-			data: JSON.stringify(params),
+			data: JSON.stringify(payload),
 			processData: false,
 			dataType: 'json'})
 		    .always(function(data_sign) {
 			// clone perche' non si tocca quello in lista op
 			var new_json = $.extend({}, json);
-			delete new_json.auth_endpoint;
+			delete new_json.auth;
 			
 			if (data_sign) {
 			    new_json.arg1 = params.user;
@@ -333,15 +329,15 @@
 	    return uuid;
 	};
 	
-	prototype.subscribe = function(topic, auth_endpoint) {
+	prototype.subscribe = function(topic, auth) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_SUBSCRIBE, 
 		       topic: topic};
-	    if (auth_endpoint) {
-		tmp.auth_endpoint = auth_endpoint;
+	    if (auth) {
+		tmp.auth = auth;
 	    }
 	    send.bind(this)(tmp);
 	    return uuid;
