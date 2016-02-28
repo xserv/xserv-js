@@ -62,8 +62,10 @@
            // private
            xserv.subscribe($("#topic").val(),
            {
-              params: {user:$("#user").val(), 
-                       pass:$("#pass").val()}
+               params: {
+                   user:$("#user").val(), 
+                   pass:$("#pass").val()
+               }
            });
         });
         $("#presence").click(function() {
