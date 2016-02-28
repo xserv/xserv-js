@@ -78,9 +78,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.auth) {
-		var auth_url = json.auth.endpoint || 
+		var endpoint = json.auth.endpoint || 
 		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1': this.secure ? 's' : '', 
-								'$2': Xserv.ADDRESS, 
+								'$2': Xserv.HOST, 
 								'$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
 								'$4': this.app_id});
 		
@@ -94,7 +94,7 @@
 		$.ajax({cache: false, 
 			crossDomain: true,
 			type: 'post', 
-			url: auth_url,
+			url: endpoint,
 			headers: headers,
 			contentType: 'application/json; charset=UTF-8',
 			data: JSON.stringify(payload),
@@ -177,11 +177,11 @@
 		}
 		
 		// non esiste un reopen quindi va reinizializzato tutto
-		this.conn = new WebSocket(Xserv.Utils.format(Xserv.URL, {'$1': this.secure ? 's' : '', 
-									 '$2': Xserv.ADDRESS, 
-									 '$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
-									 '$4': this.app_id, 
-									 '$5': Xserv.VERSION}));
+		this.conn = new WebSocket(Xserv.Utils.format(Xserv.WS_URL, {'$1': this.secure ? 's' : '', 
+									    '$2': Xserv.HOST, 
+									    '$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
+									    '$4': this.app_id, 
+									    '$5': Xserv.VERSION}));
 		
 		// su connect
 		this.conn.onopen = function(event) {
@@ -519,11 +519,11 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	// Xserv.ADDRESS = '192.168.130.153';
-	Xserv.ADDRESS = 'mobile-italia.com';
+	// Xserv.HOST = '192.168.130.153';
+	Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
-	Xserv.URL = 'ws$1://$2:$3/ws/$4?version=$5';
+	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
 	Xserv.DEFAULT_AUTH_URL = 'http$1://$2:$3/app/$4/auth_user';
 	Xserv.DEFAULT_RI = 5000;
 	
