@@ -533,8 +533,8 @@
 	Xserv.OP_HISTORY = 203;
 	Xserv.OP_USERS = 204;
 	Xserv.OP_TOPICS = 205;
-	Xserv.OP_JOIN = Xserv.OP_SUBSCRIBE + 200;
-	Xserv.OP_LEAVE = Xserv.OP_UNSUBSCRIBE + 200;
+	Xserv.OP_JOIN = 401;
+	Xserv.OP_LEAVE = 402;
 	// in uso in history
 	Xserv.HISTORY_ID = 'id';
 	Xserv.HISTORY_TIMESTAMP = 'timestamp';
