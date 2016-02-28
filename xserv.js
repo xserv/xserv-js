@@ -101,20 +101,86 @@
 			processData: false,
 			dataType: 'json'})
 		    .always(function(data_sign) {
-			// clone perche' non si tocca quello in lista op
-			var new_json = $.extend({}, json);
-			delete new_json.auth;
+			delete json.auth;
 			
 			if (data_sign) {
-			    new_json.arg1 = params.user;
-			    new_json.arg2 = data_sign.data;
-			    new_json.arg3 = data_sign.sign;
+			    json.arg1 = params.user;
+			    json.arg2 = data_sign.data;
+			    json.arg3 = data_sign.sign;
 			}
 			
-			this.conn.send(JSON.stringify(new_json));
+			this.conn.send(JSON.stringify(json));
 		    }.bind(this));
 	    } else {
 		this.conn.send(JSON.stringify(json));
+	    }
+	};
+	
+	var manageMessage = function(event) {
+	    var json = null;
+	    try {
+		json = JSON.parse(event.data);
+	    } catch(e) {
+	    }
+	    
+	    if (json) {
+		if (!json.op) {
+		    try {
+			json.data = JSON.parse(json.data);
+		    } catch(e) {
+		    }
+		    
+		    if (this.receive_messages) {
+			this.receive_messages(json);
+		    }
+		} else if (json.op) {
+		    json.name = stringifyOp(json.op);
+		    
+		    if (json.op == Xserv.OP_HANDSHAKE) {
+			if (json.rc == Xserv.RC_OK) {
+			    try {
+				var data = Xserv.Utils.Base64.decode(json.data); // decode
+				data = JSON.parse(data);
+				
+				if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
+				    setUserData.bind(this)(data);
+				}
+			    } catch(e) {
+			    }
+			    
+			    if (!$.isEmptyObject(this.user_data)) {
+				if (this.open_connection) {
+				    this.open_connection();
+				}
+			    } else {
+				if (this.error_connection) {
+				    this.error_connection(json);
+				}
+			    }
+			} else {
+			    if (this.error_connection) {
+				this.error_connection(json);
+			    }
+			}
+		    } else {
+			try {
+			    var data = Xserv.Utils.Base64.decode(json.data); // decode
+			    data = JSON.parse(data);
+			    json.data = data;
+			    
+			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+				if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
+				    setUserData.bind(this)(json.data);
+				}
+			    }
+			} catch(e) {
+			}
+			
+			if (this.receive_ops_response) {
+			    this.receive_ops_response(json);
+			}
+		    }
+		}
 	    }
 	};
 	
@@ -228,74 +294,6 @@
 		this.receive_ops_response = callback;
 	    } else if (name == 'receive_messages') {
 		this.receive_messages = callback;
-	    }
-	};
-	
-	var manageMessage = function(event) {
-	    var json = null;
-	    try {
-		json = JSON.parse(event.data);
-	    } catch(e) {
-	    }
-	    
-	    if (json) {
-		if (!json.op) {
-		    try {
-			json.data = JSON.parse(json.data);
-		    } catch(e) {
-		    }
-		    
-		    if (this.receive_messages) {
-			this.receive_messages(json);
-		    }
-		} else if (json.op) {
-		    json.name = stringifyOp(json.op);
-		    
-		    if (json.op == Xserv.OP_HANDSHAKE) {
-			if (json.rc == Xserv.RC_OK) {
-			    try {
-				var data = Xserv.Utils.Base64.decode(json.data); // decode
-				data = JSON.parse(data);
-				
-				if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
-				    setUserData.bind(this)(data);
-				}
-			    } catch(e) {
-			    }
-			    
-			    if (!$.isEmptyObject(this.user_data)) {
-				if (this.open_connection) {
-				    this.open_connection();
-				}
-			    } else {
-				if (this.error_connection) {
-				    this.error_connection(json);
-				}
-			    }
-			} else {
-			    if (this.error_connection) {
-				this.error_connection(json);
-			    }
-			}
-		    } else {
-			try {
-			    var data = Xserv.Utils.Base64.decode(json.data); // decode
-			    data = JSON.parse(data);
-			    json.data = data;
-			    
-			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
-				    setUserData.bind(this)(json.data);
-				}
-			    }
-			} catch(e) {
-			}
-			
-			if (this.receive_ops_response) {
-			    this.receive_ops_response(json);
-			}
-		    }
-		}
 	    }
 	};
 	
