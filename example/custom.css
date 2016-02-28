@@ -7,6 +7,11 @@ body
     font-size: 0.95em;
 }
 
+.panel {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .box {
     display: table;
     height: 25px;
@@ -16,6 +21,10 @@ body
     display: table-cell;
     vertical-align: middle;
     padding-right: 8px;
+}
+
+.label {
+    width: 150px;
 }
 
 #output
