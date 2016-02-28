@@ -51,69 +51,78 @@
         $("#connect").click(function() {
            xserv.connect();
         });
+
         $("#disconnect").click(function() {
            xserv.disconnect();
         });
+
         $("#clear").click(function() {
            $("#output_op").html("");
            $("#output").html("");
         });
-        
+
         $("#publish").click(function() {
            xserv.publish($("#topic").val(), $("#message").val());
         });
+
         $("#subscribe").click(function() {
            xserv.subscribe($("#topic").val());
         });
+
         $("#unsubscribe").click(function() {
            xserv.unsubscribe($("#topic").val());
         });
+
         $("#private").click(function() {
            // private
            xserv.subscribe($("#topic").val(), {
                params: {
-                   user:$("#user").val(), 
-                   pass:$("#pass").val()
+                   user: $("#user").val(), 
+                   pass: $("#pass").val()
                }
            });
         });
+
         $("#presence").click(function() {
            xserv.presence($("#topic").val());
         });
+
         $("#topics").click(function() {
            xserv.topics();
         });
+
         $("#history_i").click(function() {
            xserv.historyById($("#topic").val(), $("#offset").val(), $("#limit").val());
         });
+
         $("#history_t").click(function() {
            xserv.historyByTimestamp($("#topic").val(), $("#offset").val(), $("#limit").val());
         });
-        
+
         var xserv = new Xserv("9Pf80-3");
 	// xserv.setReconnectInterval(20000);
-	
+
         xserv.addEventListener("open_connection", function() {
            $("#state").attr("fill", "green");
            $("#info").text(JSON.stringify(xserv.getUserData()));
 	});
-	
+
 	xserv.addEventListener("close_connection", function(event) {
             // console.log(event);
 	    $("#state").attr("fill", "red");
 	});
-        
+
         xserv.addEventListener("error_connection", function(event) {
             // console.log(event);
 	    $("#state").attr("fill", "yellow");
 	});
-        
+
 	xserv.addEventListener("receive_messages", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
             $(html).hide().prependTo("#output").fadeIn(1000);
             // alert(json.message);
         });
-        
+
         xserv.addEventListener("receive_ops_response", function(json) {
             var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
 	    $(html).hide().prependTo("#output_op").fadeIn(1000);
@@ -123,7 +132,7 @@
             }
             // alert(json.data);
 	});
-        
+
         xserv.connect();
       });
     </script>
