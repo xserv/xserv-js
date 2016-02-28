@@ -60,8 +60,7 @@
         });
         $("#private").click(function() {
            // private
-           xserv.subscribe($("#topic").val(),
-           {
+           xserv.subscribe($("#topic").val(), {
                params: {
                    user:$("#user").val(), 
                    pass:$("#pass").val()
