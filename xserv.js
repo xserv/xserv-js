@@ -129,8 +129,8 @@
 		return 'unsubscribe';
 	    } else if (code == Xserv.OP_HISTORY) {
 		return 'history';
-	    } else if (code == Xserv.OP_PRESENCE) {
-		return 'presence';
+	    } else if (code == Xserv.OP_USERS) {
+		return 'users';
 	    } else if (code == Xserv.OP_JOIN) {
 		return 'join';
 	    } else if (code == Xserv.OP_LEAVE) {
@@ -379,12 +379,12 @@
 	    return uuid;
 	};
 	
-	prototype.presence = function(topic) {
+	prototype.users = function(topic) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    send.bind(this)({uuid: uuid,
-			     op: Xserv.OP_PRESENCE, 
+			     op: Xserv.OP_USERS, 
 			     topic: topic});
 	    return uuid;
 	};
@@ -534,7 +534,7 @@
 	Xserv.OP_SUBSCRIBE = 201;
 	Xserv.OP_UNSUBSCRIBE = 202;
 	Xserv.OP_HISTORY = 203;
-	Xserv.OP_PRESENCE = 204;
+	Xserv.OP_USERS = 204;
 	Xserv.OP_TOPICS = 205;
 	Xserv.OP_JOIN = Xserv.OP_SUBSCRIBE + 200;
 	Xserv.OP_LEAVE = Xserv.OP_UNSUBSCRIBE + 200;

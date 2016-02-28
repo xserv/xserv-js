@@ -30,7 +30,7 @@
       <button id="subscribe">Subscribe</button>
       <button id="private">Subscribe Private</button>
       <button id="unsubscribe">Unsubscribe</button> 
-      <button id="presence">Presence</button>
+      <button id="users">Users</button>
       <button id="topics">Topics</button></p>
     
     <p><input type="text" id="message" placeholder="Message">
@@ -83,8 +83,8 @@
            });
         });
 
-        $("#presence").click(function() {
-           xserv.presence($("#topic").val());
+        $("#users").click(function() {
+           xserv.users($("#topic").val());
         });
 
         $("#topics").click(function() {
