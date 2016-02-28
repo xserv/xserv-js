@@ -525,9 +525,8 @@
 	Xserv.DEFAULT_AUTH_URL = 'http$1://$2:$3/app/$4/auth_user';
 	Xserv.DEFAULT_RI = 5000;
 	
-	// signal
-	Xserv.OP_HANDSHAKE = 100;	
 	// op
+	Xserv.OP_HANDSHAKE = 100;
 	Xserv.OP_PUBLISH = 200;
 	Xserv.OP_SUBSCRIBE = 201;
 	Xserv.OP_UNSUBSCRIBE = 202;
