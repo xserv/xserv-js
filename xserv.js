@@ -104,7 +104,7 @@
 			delete json.auth;
 			
 			if (data_sign) {
-			    json.arg1 = params.user;
+			    json.arg1 = params.user || '';
 			    json.arg2 = data_sign.data;
 			    json.arg3 = data_sign.sign;
 			}
