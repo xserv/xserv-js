@@ -323,7 +323,8 @@
 	    send.bind(this)({uuid: uuid, 
 			     op: Xserv.OP_PUBLISH, 
 			     topic: topic, 
-			     arg1: data});
+			     arg1: data, 
+			     arg2: String(data.length)});
 	    return uuid;
 	};
 	
@@ -517,8 +518,8 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	// Xserv.HOST = '192.168.130.153';
-	Xserv.HOST = 'mobile-italia.com';
+	Xserv.HOST = '192.168.1.128';
+	// Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
 	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
@@ -548,6 +549,7 @@
 	Xserv.RC_NO_DATA = -5;
 	Xserv.RC_NOT_PRIVATE = -6;
 	Xserv.RC_LIMIT_MESSAGES = -7;
+	Xserv.RC_DATA_ERROR = -8;
 	
     }).call(this);
     
