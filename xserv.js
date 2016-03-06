@@ -124,14 +124,14 @@
 	    }
 	    
 	    if (json) {
+		json.data = Xserv.Utils.Base64.decode(json.data);
+		try {
+		    json.data = JSON.parse(json.data);
+		} catch(e) {
+		}
+		
 		if (!json.op) {
 		    // messages
-		    json.data = Xserv.Utils.Base64.decode(json.data);
-		    try {
-			json.data = JSON.parse(json.data);
-		    } catch(e) {
-		    }
-		    
 		    if (this.receive_messages) {
 			this.receive_messages(json);
 		    }
@@ -141,14 +141,8 @@
 		    if (json.op == Xserv.OP_HANDSHAKE) {
 			// handshake
 			if (json.rc == Xserv.RC_OK) {
-			    try {
-				var data = Xserv.Utils.Base64.decode(json.data);
-				data = JSON.parse(data);
-				
-				if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
-				    setUserData.bind(this)(data);
-				}
-			    } catch(e) {
+			    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
+				setUserData.bind(this)(json.data);
 			    }
 			    
 			    if (!$.isEmptyObject(this.user_data)) {
@@ -167,25 +161,18 @@
 			}
 		    } else {
 			// operations
-			try {
-			    var data = Xserv.Utils.Base64.decode(json.data);
-			    data = JSON.parse(data);
-			    json.data = data;
-			    
-			    if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
-				if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
-				    setUserData.bind(this)(json.data);
-				}
-			    } else if (json.op == Xserv.OP_HISTORY && json.rc == Xserv.RC_OK) {
-				for (var i in json.data) {
-				    json.data[i].data = Xserv.Utils.Base64.decode(json.data[i].data);
-				    try {
-					json.data[i].data = JSON.parse(json.data[i].data);
-				    } catch(e) {
-				    }
+			if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
+			    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
+				setUserData.bind(this)(json.data);
+			    }
+			} else if (json.op == Xserv.OP_HISTORY && json.rc == Xserv.RC_OK) {
+			    for (var i in json.data) {
+				json.data[i].data = Xserv.Utils.Base64.decode(json.data[i].data);
+				try {
+				    json.data[i].data = JSON.parse(json.data[i].data);
+				} catch(e) {
 				}
 			    }
-			} catch(e) {
 			}
 			
 			if (this.receive_ops_response) {
