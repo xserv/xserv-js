@@ -320,11 +320,12 @@
 	    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
 		data = JSON.stringify(data);
 	    }
+	    var base64 = Xserv.Utils.Base64.encode(data);
 	    send.bind(this)({uuid: uuid, 
 			     op: Xserv.OP_PUBLISH, 
 			     topic: topic, 
-			     arg1: data, 
-			     arg2: String(data.length)});
+			     arg1: base64, 
+			     arg2: String(base64.length)});
 	    return uuid;
 	};
 	
