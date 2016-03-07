@@ -518,8 +518,8 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	Xserv.HOST = '192.168.130.187';
-	// Xserv.HOST = 'mobile-italia.com';
+	// Xserv.HOST = '192.168.130.187';
+	Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
 	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
