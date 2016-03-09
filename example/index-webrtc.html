@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML5 WebRTC Demo</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="../xserv.js"></script>
+    <link rel="stylesheet" type="text/css" href="custom.css">
+  </head>
+  
+  <body>
+  	<div id="rtc"></div>
+    
+    <div class="box">
+      <span>
+	<svg xmlns="https://www.w3.org/2000/svg" width="20px" height="20px">
+	  <circle id="state" cx="10" cy="10" r="10" fill="red" />
+	</svg>
+      </span>
+      <span class="label">Connection Status</span>
+      <span id="info">{}</span>
+    </div>
+    
+    <div class="panel">
+      <input type="text" id="topic" placeholder="Topic"> 
+      <button id="subscribe">Subscribe</button>
+      <button id="unsubscribe">Unsubscribe</button>
+    </div>
+    
+    <div class="panel">
+      <input type="text" id="message" placeholder="Message">
+      <button id="publish">Publish</button>
+    </div>
+    
+    <pre id="output"></pre>
+    
+    <script>
+      $(document).ready(function() {
+        $("#publish").click(function() {
+           xserv.publish($("#topic").val(), $("#message").val());
+           $("#message").val("");
+           $("#message").focus();
+        });
+        
+        $("#message").keyup(function(event){
+    		if (event.keyCode == 13){
+        		$("#publish").click();
+    		}
+		});
+
+        $("#subscribe").click(function() {
+           xserv.subscribe($("#topic").val());
+        });
+
+        $("#unsubscribe").click(function() {
+           xserv.unsubscribe($("#topic").val());
+        });
+
+		var app_id = "9Pf80-3";
+        var xserv = new Xserv(app_id);
+        // xserv.disableTLS();
+        // xserv.setReconnectInterval(20000);
+
+        xserv.addEventListener("open_connection", function() {
+           $("#state").attr("fill", "green");
+           $("#info").text(JSON.stringify(xserv.getUserData()));
+		});
+
+		xserv.addEventListener("close_connection", function(event) {
+            // console.log(event);
+	    	$("#state").attr("fill", "red");
+		});
+
+        xserv.addEventListener("error_connection", function(event) {
+            // console.log(event);
+	    	$("#state").attr("fill", "yellow");
+		});
+
+		xserv.addEventListener("receive_messages", function(json) {
+            var html = "<div class='row'>" + json.data + "</div>";
+            $(html).hide().prependTo("#output").fadeIn(1000);
+            // alert(json.message);
+        });
+
+        xserv.addEventListener("receive_ops_response", function(json) {
+            if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK) {
+               $("#info").text(JSON.stringify(xserv.getUserData())); // more data
+               
+               $("#rtc").html('<iframe src="https://mobile-italia.com:8000/?app_id=' + app_id + '&room=' + json.topic + '"></iframe>')
+            } else if (json.op == Xserv.OP_UNSUBSCRIBE && json.rc == Xserv.RC_OK) {
+            	
+            }
+            // alert(json.data);
+		});
+
+        xserv.connect();
+      });
+    </script>
+    
+  </body>
+</html>
