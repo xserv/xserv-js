@@ -19,8 +19,8 @@ This library is client that allows Javascript web browser clients to connect to 
 Via the Xserv CDN:
 
 ```html
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="http://mobile-italia.com/xserv/xserv.min.js"></script> <!-- or xserv-<ver>.min.js -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://mobile-italia.com/xserv/xserv.min.js"></script> <!-- or xserv-<ver>.min.js -->
 ```
 
 ## Credits
