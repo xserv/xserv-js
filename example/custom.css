@@ -1,5 +1,4 @@
 body {
-	margin-top: 280px;
     background-color: #fefefe;
     padding-left: 8px;
     padding-right: 8px;
@@ -22,6 +21,10 @@ iframe {
 .panel {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.margintop {
+	margin-top: 280px;
 }
 
 .box {
