@@ -44,6 +44,15 @@ iframe {
     overflow-y: scroll;
 }
 
+#output2 {
+    border: #ccc solid 1px;
+    padding: 2px;
+    font-size: 0.9em;
+    padding: 4px;
+    height: 230px;
+    overflow-y: scroll;
+}
+
 #output_op {
     border: #aaa solid 1px;
     padding: 2px;
@@ -52,8 +61,15 @@ iframe {
     overflow-y: scroll;
 }
 
-.row {
+#output .row {
     border: #eee solid 1px;
+    margin-bottom: 2px;
+    padding: 6px;
+    word-wrap: break-word;
+}
+
+#output2 .row {
+	font-size: 1.0em;
     margin-bottom: 2px;
     padding: 6px;
     word-wrap: break-word;
