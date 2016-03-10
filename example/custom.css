@@ -7,13 +7,12 @@ body {
 }
 
 iframe {
-	position:absolute; 
-	top: 8px; 
-	left: 8px;
-	width: 100%;
-	height: 280px;
-	overflow: hidden;
-	padding: 0;
+    position:absolute;
+    top: 16px;
+    width: 99%;
+    height: 300px;
+    overflow: hidden;
+    padding: 0;
     margin: 0;
     border: none;
 }
@@ -24,7 +23,7 @@ iframe {
 }
 
 .margintop {
-	margin-top: 280px;
+    margin-top: 340px;
 }
 
 .box {
