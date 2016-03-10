@@ -63,11 +63,11 @@ iframe {
     border: #aaa solid 1px;
     padding: 2px;
     font-size: 0.9em;
-    height: 160px;
+    height: 230px;
     overflow-y: scroll;
 }
 
-#output .row {
+#output .row, #output_op .row {
     border: #eee solid 1px;
     margin-bottom: 2px;
     padding: 6px;
@@ -75,7 +75,7 @@ iframe {
 }
 
 #output2 .row {
-	font-size: 1.0em;
+    font-size: 1.0em;
     margin-bottom: 2px;
     padding: 6px;
     word-wrap: break-word;
