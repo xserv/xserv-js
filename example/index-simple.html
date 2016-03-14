@@ -1,26 +1,32 @@
 <!DOCTYPE html>
-<head>
-  <title>Xserv Test</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
-  <script>
-    var xserv = new Xserv("9Pf80-3");
+<html>
+  <head>
+    <title>Xserv Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
+    <script>
+      $().ready(function() {
+        var xserv = new Xserv("9Pf80-3");
 
-    // receive operation result data (bind result on this example)
-    xserv.addEventListener("receive_ops_response", function(json) {
-        // alert(JSON.stringify(json));
-    });
+        // receive operation result data (bind result on this example)
+        xserv.addEventListener("receive_ops_response", function(json) {
+          // alert(JSON.stringify(json));
+        });
 
-    // receive events data
-    xserv.addEventListener("receive_messages", function(json) {
-        alert(JSON.stringify(json));
-    });
+        // receive events data
+        xserv.addEventListener("receive_messages", function(json) {
+          alert(JSON.stringify(json));
+        });
 
-    xserv.addEventListener("open_connection", function() {
-        xserv.subscribe("my_topic");
-    });
+        xserv.addEventListener("open_connection", function() {
+          xserv.subscribe("my_topic");
+        });
 
-    xserv.connect();
-  </script>
-</head>
+        xserv.connect();
+	  });
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
