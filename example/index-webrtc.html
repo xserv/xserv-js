@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>HTML5 WebRTC Demo</title>
+    <title>Xserv WebRTC Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="../xserv.js"></script>
@@ -9,7 +9,7 @@
   </head>
   
   <body class="margintop">
-  	<div id="rtc"></div>
+    <div id="rtc"></div>
     
     <div class="box">
       <span>
@@ -41,12 +41,12 @@
            $("#message").val("");
            $("#message").focus();
         });
-        
+
         $("#message").keyup(function(event){
-    		if (event.keyCode == 13){
-        		$("#publish").click();
-    		}
-		});
+           if (event.keyCode == 13){
+              $("#publish").click();
+           }
+        });
 
         $("#subscribe").click(function() {
            xserv.subscribe($("#topic").val());
@@ -56,28 +56,27 @@
            xserv.unsubscribe($("#topic").val());
         });
 
-		var app_id = "9Pf80-3";
+        var app_id = "9Pf80-3";
         var xserv = new Xserv(app_id);
-        // xserv.disableTLS();
         // xserv.setReconnectInterval(20000);
 
         xserv.addEventListener("open_connection", function() {
            $("#state").attr("fill", "green");
            $("#info").text(JSON.stringify(xserv.getUserData()));
-		});
+        });
 
-		xserv.addEventListener("close_connection", function(event) {
-            // console.log(event);
-	    	$("#state").attr("fill", "red");
-		});
+        xserv.addEventListener("close_connection", function(event) {
+           // console.log(event);
+           $("#state").attr("fill", "red");
+        });
 
         xserv.addEventListener("error_connection", function(event) {
-            // console.log(event);
-	    	$("#state").attr("fill", "yellow");
-		});
+           // console.log(event);
+           $("#state").attr("fill", "yellow");
+        });
 
-		xserv.addEventListener("receive_messages", function(json) {
-			var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
+        xserv.addEventListener("receive_messages", function(json) {
+            var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
             var html = "<div class='row'>" + prefix + json.data + "</div>";
             $(html).hide().prependTo("#output2").fadeIn(1000);
             // alert(json.message);
@@ -92,11 +91,10 @@
             	$("#rtc").html('');
             }
             // alert(json.data);
-		});
+        });
 
         xserv.connect();
       });
     </script>
-    
   </body>
 </html>

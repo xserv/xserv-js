@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>HTML5 Demo</title>
+    <title>Xserv Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="../xserv.js"></script>
@@ -111,7 +111,6 @@
         });
 
         var xserv = new Xserv("9Pf80-3");
-        // xserv.disableTLS();
         // xserv.setReconnectInterval(20000);
 
         xserv.addEventListener("open_connection", function() {
@@ -148,6 +147,5 @@
         xserv.connect();
       });
     </script>
-    
   </body>
 </html>
