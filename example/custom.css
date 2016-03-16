@@ -6,6 +6,10 @@ body {
     font-size: 0.95em;
 }
 
+h1, h4 {
+    color: #444 !important;
+}
+
 iframe {
     position:absolute;
     top: 16px;
@@ -32,6 +36,7 @@ iframe {
 }
 
 .box span {
+    color: #555;
     display: table-cell;
     vertical-align: middle;
     padding-right: 8px;
@@ -65,18 +70,21 @@ iframe {
     font-size: 0.9em;
     height: 230px;
     overflow-y: scroll;
+    white-space: pre-wrap;       /* CSS 3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
 #output .row, #output_op .row {
     border: #eee solid 1px;
     margin-bottom: 2px;
     padding: 6px;
-    word-wrap: break-word;
 }
 
 #output2 .row {
     font-size: 1.0em;
     margin-bottom: 2px;
     padding: 6px;
-    word-wrap: break-word;
 }
