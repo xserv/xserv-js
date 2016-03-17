@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!--<script src="https://mobile-italia.com/xserv/xserv.min.js"></script>-->
-    <script src="../xserv.min.js"></script>
+    <script src="../xserv.js"></script>
     <link rel="stylesheet" type="text/css" href="custom.css">
   </head>
   
@@ -62,6 +62,41 @@
     
     <script>
       $(document).ready(function() {
+
+        var xserv = new Xserv("9Pf80-3");
+        // xserv.setReconnectInterval(20000);
+
+        xserv.addEventListener("connection_open", function() {
+           $("#state").attr("fill", "green");
+           $("#info").text(JSON.stringify(xserv.getUserData()));
+	});
+
+	xserv.addEventListener("connection_close", function(event) {
+	    $("#state").attr("fill", "red");
+	});
+
+        xserv.addEventListener("connection_error", function(event) {
+	    $("#state").attr("fill", "yellow");
+	});
+
+        var op_callback = function(json) {
+            var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
+	    $(html).hide().prependTo("#output_op").fadeIn(1000);
+            
+            if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK && Xserv.isPrivateTopic(json.topic)) {
+               $("#info").text(JSON.stringify(xserv.getUserData())); // more data
+            }
+        };
+
+        var msg_callback = function(json) {
+           var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
+            $(html).hide().prependTo("#output").fadeIn(1000);
+        };
+
+        xserv.addEventListener("receive_ops_response", op_callback);
+
+        xserv.addEventListener("receive_messages", msg_callback);
+
         $("#connect").click(function() {
            xserv.connect();
         });
@@ -76,15 +111,15 @@
         });
 
         $("#publish").click(function() {
-           xserv.publish($("#topic").val(), $("#message").val());
+          xserv.publish($("#topic").val(), $("#message").val(), op_callback);
         });
 
         $("#subscribe").click(function() {
-           xserv.subscribe($("#topic").val());
+           xserv.subscribe($("#topic").val(), op_callback);
         });
 
         $("#unsubscribe").click(function() {
-           xserv.unsubscribe($("#topic").val());
+           xserv.unsubscribe($("#topic").val(), op_callback);
         });
 
         $("#private").click(function() {
@@ -94,58 +129,24 @@
                    user: $("#user").val(), 
                    pass: $("#pass").val()
                }
-           });
+           }, op_callback);
         });
 
         $("#users").click(function() {
-           xserv.users($("#topic").val());
+           xserv.users($("#topic").val(), op_callback);
         });
 
         $("#topics").click(function() {
-           xserv.topics();
+           xserv.topics(op_callback);
         });
 
         $("#history_i").click(function() {
-           xserv.historyById($("#topic").val(), $("#offset").val(), $("#limit").val());
+           xserv.historyById($("#topic").val(), $("#offset").val(), $("#limit").val(), op_callback);
         });
 
         $("#history_t").click(function() {
-           xserv.historyByTimestamp($("#topic").val(), $("#offset").val(), $("#limit").val());
+           xserv.historyByTimestamp($("#topic").val(), $("#offset").val(), $("#limit").val(), op_callback);
         });
-
-        var xserv = new Xserv("9Pf80-3");
-        // xserv.setReconnectInterval(20000);
-
-        xserv.addEventListener("open_connection", function() {
-           $("#state").attr("fill", "green");
-           $("#info").text(JSON.stringify(xserv.getUserData()));
-	});
-
-	xserv.addEventListener("close_connection", function(event) {
-            // console.log(event);
-	    $("#state").attr("fill", "red");
-	});
-
-        xserv.addEventListener("error_connection", function(event) {
-            // console.log(event);
-	    $("#state").attr("fill", "yellow");
-	});
-
-	xserv.addEventListener("receive_messages", function(json) {
-            var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
-            $(html).hide().prependTo("#output").fadeIn(1000);
-            // alert(json.message);
-        });
-
-        xserv.addEventListener("receive_ops_response", function(json) {
-            var html = "<div class='row'>" + JSON.stringify(json) + "</div>";
-	    $(html).hide().prependTo("#output_op").fadeIn(1000);
-            
-            if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK && Xserv.isPrivateTopic(json.topic)) {
-               $("#info").text(JSON.stringify(xserv.getUserData())); // more data
-            }
-            // alert(json.data);
-	});
 
         xserv.connect();
       });

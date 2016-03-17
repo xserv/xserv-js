@@ -134,13 +134,8 @@
 		
 		if (!json.op) {
 		    // messages
-		    if (this.callbacks[json.uuid]) {
-			this.callbacks[json.uuid](json);
-			delete this.callbacks[json.uuid];
-		    } else {
-			if (this.receive_messages) {
-			    this.receive_messages(json);
-			}
+		    if (this.receive_messages) {
+			this.receive_messages(json);
 		    }
 		} else if (json.op) {
 		    json.name = stringifyOp(json.op);
@@ -153,17 +148,17 @@
 			    }
 			    
 			    if (!$.isEmptyObject(this.user_data)) {
-				if (this.open_connection) {
-				    this.open_connection();
+				if (this.connection_open) {
+				    this.connection_open();
 				}
 			    } else {
-				if (this.error_connection) {
-				    this.error_connection(json);
+				if (this.connection_error) {
+				    this.connection_error(json);
 				}
 			    }
 			} else {
-			    if (this.error_connection) {
-				this.error_connection(json);
+			    if (this.connection_error) {
+				this.connection_error(json);
 			    }
 			}
 		    } else {
@@ -268,8 +263,8 @@
 		
 		this.conn.onclose = function(event) {
 		    this.callbacks = {};
-		    if (this.close_connection) {
-			this.close_connection(event);
+		    if (this.connection_close) {
+			this.connection_close(event);
 		    }
 		    
 		    // viene chiamata sempre prima della chiusura della socket
@@ -278,8 +273,8 @@
 		
 		this.conn.onerror = function(event) {
 		    this.callbacks = {};
-		    if (this.error_connection) {
-			this.error_connection(event);
+		    if (this.connection_error) {
+			this.connection_error(event);
 		    }
 		}.bind(this);
 		
@@ -298,12 +293,12 @@
 	};
 	
 	prototype.addEventListener = function(name, callback) {
-	    if (name == 'open_connection') {
-		this.open_connection = callback;
-	    } else if (name == 'close_connection') {
-		this.close_connection = callback;
-	    } else if (name == 'error_connection') {
-		this.error_connection = callback;
+	    if (name == 'connection_open') {
+		this.connection_open = callback;
+	    } else if (name == 'connection_close') {
+		this.connection_close = callback;
+	    } else if (name == 'connection_error') {
+		this.connection_error = callback;
 	    } else if (name == 'receive_ops_response') {
 		this.receive_ops_response = callback;
 	    } else if (name == 'receive_messages') {
@@ -348,13 +343,19 @@
 	prototype.subscribe = function(topic, auth, callback) {
 	    if (!this.isConnected()) return;
 	    
+	    // fix
+	    if (auth && Xserv.Utils.isFunction(auth)) {
+		callback = auth;
+		auth = null;
+	    }
+	    
 	    var uuid = Xserv.Utils.generateUUID();
 	    this.callbacks[uuid] = callback;
 	    
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_SUBSCRIBE, 
 		       topic: topic};
-	    if (auth) {
+	    if (auth && Xserv.Utils.isObject(auth)) {
 		tmp.auth = auth;
 	    }
 	    send.bind(this)(tmp);
@@ -443,16 +444,20 @@
 		return strX;
 	    },
 	    
+	    isFunction: function(value) {
+		return $.type(value) === 'function';
+	    },
+	    
 	    isString: function(value) {
-		return typeof value === 'string';
+		return $.type(value) === 'string';
 	    },
 	    
 	    isObject: function(value) {
-		return typeof value === 'object';
+		return $.type(value) === 'object';
 	    },
 	    
 	    isArray: function(value) {
-		return Object.prototype.toString.call(value) === '[object Array]';
+		return $.type(value) === 'array';
 	    },
 	    
 	    generateUUID: function() {
