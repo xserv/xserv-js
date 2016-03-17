@@ -36,6 +36,8 @@
 	    this.is_auto_reconnect = false;
 	    // TLS
 	    this.secure = true;
+	    // callbacks
+	    this.callbacks = {};
 	}
 	
 	var prototype = Xserv.prototype;
@@ -312,10 +314,12 @@
 	    return this.user_data.socket_id ? this.user_data.socket_id : '';
 	};
 	
-	prototype.publish = function(topic, data) {
+	prototype.publish = function(topic, data, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
 		data = JSON.stringify(data);
 	    }
@@ -328,10 +332,12 @@
 	    return uuid;
 	};
 	
-	prototype.subscribe = function(topic, auth) {
+	prototype.subscribe = function(topic, auth, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_SUBSCRIBE, 
 		       topic: topic};
@@ -342,20 +348,24 @@
 	    return uuid;
 	};
 	
-	prototype.unsubscribe = function(topic) {
+	prototype.unsubscribe = function(topic, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_UNSUBSCRIBE, 
 			     topic: topic});
 	    return uuid;
 	};
 	
-	prototype.historyById = function(topic, offset, limit) {
+	prototype.historyById = function(topic, offset, limit, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
@@ -365,10 +375,12 @@
 	    return uuid;
 	};
 	
-	prototype.historyByTimestamp = function(topic, offset, limit) {
+	prototype.historyByTimestamp = function(topic, offset, limit, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
@@ -378,20 +390,24 @@
 	    return uuid;
 	};
 	
-	prototype.users = function(topic) {
+	prototype.users = function(topic, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_USERS, 
 			     topic: topic});
 	    return uuid;
 	};
 	
-	prototype.topics = function() {
+	prototype.topics = function(callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
+	    this.callbacks[uuid] = callback;
+	    
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_TOPICS};
 	    send.bind(this)(tmp);
