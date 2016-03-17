@@ -299,9 +299,9 @@
 		this.connection_close = callback;
 	    } else if (name == 'connection_error') {
 		this.connection_error = callback;
-	    } else if (name == 'receive_ops_response') {
+	    } else if (name == 'operations') {
 		this.receive_ops_response = callback;
-	    } else if (name == 'receive_messages') {
+	    } else if (name == 'messages') {
 		this.receive_messages = callback;
 	    }
 	};
@@ -326,8 +326,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
 		data = JSON.stringify(data);
 	    }
@@ -350,8 +351,9 @@
 	    }
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_SUBSCRIBE, 
 		       topic: topic};
@@ -366,8 +368,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_UNSUBSCRIBE, 
 			     topic: topic});
@@ -378,8 +381,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
@@ -393,8 +397,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
@@ -408,8 +413,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_USERS, 
 			     topic: topic});
@@ -420,8 +426,9 @@
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
-	    this.callbacks[uuid] = callback;
-	    
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
 	    var tmp = {uuid: uuid,
 		       op: Xserv.OP_TOPICS};
 	    send.bind(this)(tmp);

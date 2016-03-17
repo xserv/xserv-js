@@ -93,9 +93,9 @@
             $(html).hide().prependTo("#output").fadeIn(1000);
         };
 
-        xserv.addEventListener("receive_ops_response", op_callback);
+        xserv.addEventListener("operations", op_callback);
 
-        xserv.addEventListener("receive_messages", msg_callback);
+        xserv.addEventListener("messages", msg_callback);
 
         $("#connect").click(function() {
            xserv.connect();
