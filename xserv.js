@@ -134,8 +134,13 @@
 		
 		if (!json.op) {
 		    // messages
-		    if (this.receive_messages) {
-			this.receive_messages(json);
+		    if (this.callbacks[json.uuid]) {
+			this.callbacks[json.uuid](json);
+			delete this.callbacks[json.uuid];
+		    } else {
+			if (this.receive_messages) {
+			    this.receive_messages(json);
+			}
 		    }
 		} else if (json.op) {
 		    json.name = stringifyOp(json.op);
@@ -177,8 +182,13 @@
 			    }
 			}
 			
-			if (this.receive_ops_response) {
-			    this.receive_ops_response(json);
+			if (this.callbacks[json.uuid]) {
+			    this.callbacks[json.uuid](json);
+			    delete this.callbacks[json.uuid];
+			} else {
+			    if (this.receive_ops_response) {
+				this.receive_ops_response(json);
+			    }
 			}
 		    }
 		}
@@ -242,6 +252,7 @@
 		if (this.conn) {
 		    delete this.conn;
 		}
+		this.callbacks = {};
 		
 		// non esiste un reopen quindi va reinizializzato tutto
 		this.conn = new WebSocket(Xserv.Utils.format(Xserv.WS_URL, {'$1': this.secure ? 's' : '', 
@@ -256,6 +267,7 @@
 		}.bind(this);
 		
 		this.conn.onclose = function(event) {
+		    this.callbacks = {};
 		    if (this.close_connection) {
 			this.close_connection(event);
 		    }
@@ -265,6 +277,7 @@
 		}.bind(this);
 		
 		this.conn.onerror = function(event) {
+		    this.callbacks = {};
 		    if (this.error_connection) {
 			this.error_connection(event);
 		    }
