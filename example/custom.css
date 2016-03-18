@@ -10,7 +10,7 @@ h1, h4 {
     color: #444 !important;
 }
 
-iframe {
+#video_div iframe {
     position:absolute;
     top: 16px;
     width: 99%;

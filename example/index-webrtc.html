@@ -12,7 +12,7 @@
     <h1>Xserv JS SDK - Basic WebRTC Integration Example</h1>
     <p>This example use a basic Xserv WebRTC integration. Share this page with your friends to test.</p>
     <br>
-    <div id="rtc"></div>
+    <div id="video_div"></div>
     
     <div class="box">
       <span>
@@ -66,8 +66,8 @@
         xserv.addEventListener("operations", function(json) {
             if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK) {
             	$("#info").text(JSON.stringify(xserv.getUserData())); // more data
-               
-            	$("#rtc").html('<iframe scrolling="no" src="https://mobile-italia.com:8000/?app_id=' + app_id + '&room=' + json.topic + '"></iframe>');
+                
+            	xserv.createExtra("webrtc", json.topic, "video_div");
             } else if (json.op == Xserv.OP_UNSUBSCRIBE && json.rc == Xserv.RC_OK) {
             	$("#rtc").html('');
             }
