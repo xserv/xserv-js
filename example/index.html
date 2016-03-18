@@ -109,10 +109,6 @@
            $("#output").html("");
         });
 
-        $("#publish").click(function() {
-          xserv.publish($("#topic").val(), $("#message").val(), op_callback);
-        });
-
         $("#subscribe").click(function() {
            xserv.subscribe($("#topic").val(), op_callback);
         });
@@ -129,6 +125,10 @@
                    pass: $("#pass").val()
                }
            }, op_callback);
+        });
+
+        $("#publish").click(function() {
+          xserv.publish($("#topic").val(), $("#message").val(), op_callback);
         });
 
         $("#users").click(function() {
@@ -148,6 +148,7 @@
         });
 
         xserv.connect();
+
       });
     </script>
   </body>

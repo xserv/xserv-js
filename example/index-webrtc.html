@@ -39,6 +39,52 @@
     
     <script>
       $(document).ready(function() {
+
+        var app_id = "9Pf80-3";
+        var xserv = new Xserv(app_id);
+        // xserv.setReconnectInterval(20000);
+
+        xserv.addEventListener("connection_open", function() {
+           $("#state").attr("fill", "green");
+           $("#info").text(JSON.stringify(xserv.getUserData()));
+        });
+
+        xserv.addEventListener("connection_close", function(event) {
+           // console.log(event);
+           $("#state").attr("fill", "red");
+        });
+
+        xserv.addEventListener("connection_error", function(event) {
+           // console.log(event);
+           $("#state").attr("fill", "yellow");
+        });
+
+        xserv.addEventListener("messages", function(json) {
+            var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
+            var html = "<div class='row'>" + prefix + json.data + "</div>";
+            $(html).hide().prependTo("#output2").fadeIn(1000);
+            // alert(json.message);
+        });
+
+        xserv.addEventListener("operations", function(json) {
+            if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK) {
+            	$("#info").text(JSON.stringify(xserv.getUserData())); // more data
+               
+            	$("#rtc").html('<iframe scrolling="no" src="https://mobile-italia.com:8000/?app_id=' + app_id + '&room=' + json.topic + '"></iframe>');
+            } else if (json.op == Xserv.OP_UNSUBSCRIBE && json.rc == Xserv.RC_OK) {
+            	$("#rtc").html('');
+            }
+            // alert(json.data);
+        });
+
+        $("#subscribe").click(function() {
+           xserv.subscribe($("#topic").val());
+        });
+
+        $("#unsubscribe").click(function() {
+           xserv.unsubscribe($("#topic").val());
+        });
+
         $("#publish").click(function() {
            xserv.publish($("#topic").val(), $("#message").val());
            $("#message").val("");
@@ -51,52 +97,8 @@
            }
         });
 
-        $("#subscribe").click(function() {
-           xserv.subscribe($("#topic").val());
-        });
-
-        $("#unsubscribe").click(function() {
-           xserv.unsubscribe($("#topic").val());
-        });
-
-        var app_id = "9Pf80-3";
-        var xserv = new Xserv(app_id);
-        // xserv.setReconnectInterval(20000);
-
-        xserv.addEventListener("open_connection", function() {
-           $("#state").attr("fill", "green");
-           $("#info").text(JSON.stringify(xserv.getUserData()));
-        });
-
-        xserv.addEventListener("close_connection", function(event) {
-           // console.log(event);
-           $("#state").attr("fill", "red");
-        });
-
-        xserv.addEventListener("error_connection", function(event) {
-           // console.log(event);
-           $("#state").attr("fill", "yellow");
-        });
-
-        xserv.addEventListener("receive_messages", function(json) {
-            var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
-            var html = "<div class='row'>" + prefix + json.data + "</div>";
-            $(html).hide().prependTo("#output2").fadeIn(1000);
-            // alert(json.message);
-        });
-
-        xserv.addEventListener("receive_ops_response", function(json) {
-            if (json.op == Xserv.OP_SUBSCRIBE && json.rc == Xserv.RC_OK) {
-            	$("#info").text(JSON.stringify(xserv.getUserData())); // more data
-               
-            	$("#rtc").html('<iframe scrolling="no" src="https://mobile-italia.com:8000/?app_id=' + app_id + '&room=' + json.topic + '"></iframe>');
-            } else if (json.op == Xserv.OP_UNSUBSCRIBE && json.rc == Xserv.RC_OK) {
-            	$("#rtc").html('');
-            }
-            // alert(json.data);
-        });
-
         xserv.connect();
+
       });
     </script>
   </body>

@@ -7,23 +7,25 @@
     <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
     <script>
       $().ready(function() {
+
         var xserv = new Xserv("9Pf80-3");
 
+        xserv.addEventListener("connection_open", function() {
+          xserv.subscribe("my_topic");
+        });
+
         // receive operation result data (bind result on this example)
-        xserv.addEventListener("receive_ops_response", function(json) {
+        xserv.addEventListener("operations", function(json) {
           // alert(JSON.stringify(json));
         });
 
         // receive events data
-        xserv.addEventListener("receive_messages", function(json) {
+        xserv.addEventListener("messages", function(json) {
           alert(JSON.stringify(json));
         });
 
-        xserv.addEventListener("open_connection", function() {
-          xserv.subscribe("my_topic");
-        });
-
         xserv.connect();
+
       });
     </script>
   </head>
