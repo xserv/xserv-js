@@ -229,7 +229,8 @@
 	    if (type == 'webrtc') {
 		var canvas = $('#' + div);
 		if (canvas) {
-		    canvas.html('<iframe scrolling="no" src="https://' + Xserv.HOST + ' :8000/?app_id=' + this.app_id + '&room=' + topic + '"></iframe>');
+		    canvas.html('<iframe scrolling="no" src="https://' + Xserv.HOST + ':8000/?app_id=' + this.app_id + 
+				'&room=' + topic.replace("@", "priv_") + '"></iframe>');
 		}
 	    }
 	};
