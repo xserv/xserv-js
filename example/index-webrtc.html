@@ -50,12 +50,10 @@
         });
 
         xserv.addEventListener("connection_close", function(event) {
-           // console.log(event);
            $("#state").attr("fill", "red");
         });
 
         xserv.addEventListener("connection_error", function(event) {
-           // console.log(event);
            $("#state").attr("fill", "yellow");
         });
 
@@ -63,7 +61,6 @@
             var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
             var html = "<div class='row'>" + prefix + json.data + "</div>";
             $(html).hide().prependTo("#output2").fadeIn(1000);
-            // alert(json.message);
         });
 
         xserv.addEventListener("operations", function(json) {
@@ -74,7 +71,6 @@
             } else if (json.op == Xserv.OP_UNSUBSCRIBE && json.rc == Xserv.RC_OK) {
             	$("#rtc").html('');
             }
-            // alert(json.data);
         });
 
         $("#subscribe").click(function() {

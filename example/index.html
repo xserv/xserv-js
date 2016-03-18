@@ -109,6 +109,8 @@
            $("#output").html("");
         });
 
+        // example with commands callback
+
         $("#subscribe").click(function() {
            xserv.subscribe($("#topic").val(), op_callback);
         });
@@ -118,7 +120,7 @@
         });
 
         $("#private").click(function() {
-           // private
+           // private topic
            xserv.subscribe($("#topic").val(), {
                params: {
                    user: $("#user").val(), 
