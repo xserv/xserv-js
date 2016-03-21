@@ -4,7 +4,8 @@
     <title>Xserv JS SDK - WebSocket API Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
+    <!--<script src="https://mobile-italia.com/xserv/xserv.min.js"></script>-->
+    <script src="..//xserv.js"></script>
     <link rel="stylesheet" type="text/css" href="custom.css">
   </head>
   
@@ -50,7 +51,6 @@
     <div class="panel">
       <input type="text" id="offset" placeholder="Offset">
       <input type="text" id="limit" placeholder="Limit"> 
-      <button id="history_i">History by ID</button>
       <button id="history_t">History by Timestamp</button>
     </div>
     
@@ -63,6 +63,7 @@
       $(document).ready(function() {
 
         var xserv = new Xserv("9Pf80-3");
+        xserv.disableTLS();
         // xserv.setReconnectInterval(20000);
 
         xserv.addEventListener("connection_open", function() {
@@ -141,12 +142,8 @@
            xserv.topics(op_callback);
         });
 
-        $("#history_i").click(function() {
-           xserv.historyById($("#topic").val(), $("#offset").val(), $("#limit").val(), op_callback);
-        });
-
         $("#history_t").click(function() {
-           xserv.historyByTimestamp($("#topic").val(), $("#offset").val(), $("#limit").val(), op_callback);
+           xserv.history($("#topic").val(), $("#offset").val(), $("#limit").val(), op_callback);
         });
 
         xserv.connect();
