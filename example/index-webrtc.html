@@ -82,7 +82,14 @@
         });
 
         $("#publish").click(function() {
-           xserv.publish($("#topic").val(), $("#message").val());
+           var data = $("#message").val();
+           if (Xserv.Utils.isString(data)) {
+             try {
+               data = JSON.parse(data);
+             } catch(e) {
+             }
+           }
+           xserv.publish($("#topic").val(), data);
            $("#message").val("");
            $("#message").focus();
         });

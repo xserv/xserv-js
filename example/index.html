@@ -131,7 +131,14 @@
         });
 
         $("#publish").click(function() {
-          xserv.publish($("#topic").val(), $("#message").val(), op_callback);
+          var data = $("#message").val();
+          if (Xserv.Utils.isString(data)) {
+            try {
+              data = JSON.parse(data);
+            } catch(e) {
+            }
+          }
+          xserv.publish($("#topic").val(), data, op_callback);
         });
 
         $("#users").click(function() {

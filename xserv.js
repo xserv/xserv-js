@@ -126,22 +126,31 @@
 	    }
 	    
 	    if (json) {
-		json.data = Xserv.Utils.Base64.decode(json.data);
-		try {
-		    json.data = JSON.parse(json.data);
-		} catch(e) {
-		}
-		
 		if (!json.op) {
 		    // messages
+		    
+		    try {
+			json.data = JSON.parse(json.data);
+		    } catch(e) {
+		    }
+		    
 		    if (this.receive_messages) {
 			this.receive_messages(json);
 		    }
 		} else if (json.op) {
+		    // operations
+		    
+		    json.data = Xserv.Utils.Base64.decode(json.data);
+		    try {
+			json.data = JSON.parse(json.data);
+		    } catch(e) {
+		    }
+		    
 		    json.name = stringifyOp(json.op);
 		    
 		    if (json.op == Xserv.OP_HANDSHAKE) {
 			// handshake
+			
 			if (json.rc == Xserv.RC_OK) {
 			    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
 				setUserData.bind(this)(json.data);
@@ -152,24 +161,26 @@
 				    this.connection_open();
 				}
 			    } else {
+				this.callbacks = {};
 				if (this.connection_error) {
 				    this.connection_error(json);
 				}
 			    }
 			} else {
+			    this.callbacks = {};
 			    if (this.connection_error) {
 				this.connection_error(json);
 			    }
 			}
 		    } else {
-			// operations
+			// classic operations
+			
 			if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
 			    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
 				setUserData.bind(this)(json.data);
 			    }
 			} else if (json.op == Xserv.OP_HISTORY && json.rc == Xserv.RC_OK) {
 			    for (var i in json.data) {
-				json.data[i].data = Xserv.Utils.Base64.decode(json.data[i].data);
 				try {
 				    json.data[i].data = JSON.parse(json.data[i].data);
 				} catch(e) {
@@ -339,15 +350,10 @@
 	    if (callback) {
 		this.callbacks[uuid] = callback;
 	    }
-	    if (!Xserv.Utils.isString(data) && Xserv.Utils.isObject(data)) {
-		data = JSON.stringify(data);
-	    }
-	    var base64 = Xserv.Utils.Base64.encode(data);
 	    send.bind(this)({uuid: uuid, 
 			     op: Xserv.OP_PUBLISH, 
 			     topic: topic, 
-			     arg1: base64, 
-			     arg2: String(base64.length)});
+			     arg1: data});
 	    return uuid;
 	};
 	
@@ -552,8 +558,8 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	Xserv.HOST = '192.168.130.187';
-	// Xserv.HOST = 'mobile-italia.com';
+	// Xserv.HOST = '192.168.130.187';
+	Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
 	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
