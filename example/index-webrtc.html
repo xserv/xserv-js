@@ -83,12 +83,12 @@
 
         $("#publish").click(function() {
            var data = $("#message").val();
-           if (Xserv.Utils.isString(data)) {
+           /*if (Xserv.Utils.isString(data)) {
              try {
                data = JSON.parse(data);
              } catch(e) {
              }
-           }
+           }*/
            xserv.publish($("#topic").val(), data);
            $("#message").val("");
            $("#message").focus();
