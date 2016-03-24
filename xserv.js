@@ -129,11 +129,6 @@
 		if (!json.op) {
 		    // messages
 		    
-		    try {
-			json.data = JSON.parse(json.data);
-		    } catch(e) {
-		    }
-		    
 		    if (this.receive_messages) {
 			this.receive_messages(json);
 		    }
@@ -154,9 +149,7 @@
 			if (json.rc == Xserv.RC_OK) {
 			    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
 				setUserData.bind(this)(json.data);
-			    }
-			    
-			    if (!$.isEmptyObject(this.user_data)) {
+				
 				if (this.connection_open) {
 				    this.connection_open();
 				}
@@ -178,13 +171,6 @@
 			if (json.op == Xserv.OP_SUBSCRIBE && Xserv.isPrivateTopic(json.topic) && json.rc == Xserv.RC_OK) {
 			    if (!Xserv.Utils.isString(json.data) && Xserv.Utils.isObject(json.data)) {
 				setUserData.bind(this)(json.data);
-			    }
-			} else if (json.op == Xserv.OP_HISTORY && json.rc == Xserv.RC_OK) {
-			    for (var i in json.data) {
-				try {
-				    json.data[i].data = JSON.parse(json.data[i].data);
-				} catch(e) {
-				}
 			    }
 			}
 			
