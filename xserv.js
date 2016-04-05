@@ -45,7 +45,7 @@
 	// private
 	
 	var reConnect = function() {
-	    if (this.is_auto_reconnect) {
+	    if (this.is_auto_reconnect && this.reconnect_interval > 0) {
 		setTimeout(function() { 
 		    this.connect(true); 
 		}.bind(this), this.reconnect_interval);
@@ -210,6 +210,8 @@
 		return 'handshake';
 	    } else if (code == Xserv.OP_TOPICS) {
 		return 'topics';
+	    } else if (code == Xserv.OP_UPDATE) {
+		return 'update';
 	    }
 	    return '';
 	};
@@ -340,6 +342,21 @@
 			     op: Xserv.OP_PUBLISH, 
 			     topic: topic, 
 			     arg1: data});
+	    return uuid;
+	};
+	
+	prototype.update = function(topic, data, object_id, callback) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
+	    send.bind(this)({uuid: uuid, 
+			     op: Xserv.OP_UPDATE, 
+			     topic: topic, 
+			     arg1: data,
+			     arg2: object_id});
 	    return uuid;
 	};
 	
@@ -544,8 +561,8 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	// Xserv.HOST = '192.168.130.187';
-	Xserv.HOST = 'mobile-italia.com';
+	Xserv.HOST = '192.168.1.131';
+	// Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
 	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
@@ -560,6 +577,7 @@
 	Xserv.OP_HISTORY = 203;
 	Xserv.OP_USERS = 204;
 	Xserv.OP_TOPICS = 205;
+	Xserv.OP_UPDATE = 300;
 	Xserv.OP_JOIN = 401;
 	Xserv.OP_LEAVE = 402;
 	// op result_code
@@ -572,7 +590,7 @@
 	Xserv.RC_NO_DATA = -5;
 	Xserv.RC_NOT_PRIVATE = -6;
 	Xserv.RC_LIMIT_MESSAGES = -7;
-	Xserv.RC_DATA_ERROR = -8;
+	Xserv.RC_DB_ERROR = -8;
 	
     }).call(this);
     
