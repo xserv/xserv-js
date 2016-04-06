@@ -396,7 +396,7 @@
 	    return uuid;
 	};
 	
-	prototype.history = function(topic, offset, limit, callback) {
+	prototype.history = function(topic, params, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
@@ -406,8 +406,9 @@
 	    send.bind(this)({uuid: uuid,
 			     op: Xserv.OP_HISTORY, 
 			     topic: topic, 
-			     arg1: String(offset), 
-			     arg2: String(limit)});
+			     arg1: String(params.offset ? params.offset : 0), 
+			     arg2: String(params.limit ? params.limit : 0),
+			     arg3: params.query ? params.query : ""});
 	    return uuid;
 	};
 	
@@ -561,7 +562,7 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	Xserv.HOST = '192.168.1.131';
+	Xserv.HOST = '192.168.130.187';
 	// Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';

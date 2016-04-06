@@ -32,6 +32,9 @@
       <input type="text" id="topic" placeholder="Topic">
       <input type="text" id="user" placeholder="User (private)">
       <input type="text" id="pass" placeholder="Pass (private)"> 
+    </div>
+
+    <div class="panel">
       <button id="subscribe">Subscribe</button>
       <button id="private">Subscribe Private</button>
       <button id="unsubscribe">Unsubscribe</button>
@@ -49,8 +52,7 @@
     </div>
     
     <div class="panel">
-      <input type="text" id="offset" placeholder="Offset">
-      <input type="text" id="limit" placeholder="Limit"> 
+      <input type="text" id="params" placeholder="Params">
       <button id="history_t">History</button>
     </div>
     
@@ -155,7 +157,12 @@
         });
 
         $("#history_t").click(function() {
-           xserv.history($("#topic").val(), $("#offset").val(), $("#limit").val(), op_callback);
+           var params = {};
+           try {
+              params = JSON.parse($("#params").val());
+           } catch(e) {
+           }
+           xserv.history($("#topic").val(), params, op_callback);
         });
 
         xserv.connect();

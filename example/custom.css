@@ -10,6 +10,14 @@ h1, h4 {
     color: #444 !important;
 }
 
+input[type="text"] {
+    width: 240px;
+}
+
+button {
+    width: 120px;
+}
+
 #video_div iframe {
     position:absolute;
     top: 16px;
