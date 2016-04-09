@@ -83,10 +83,11 @@
 		var endpoint = json.auth.endpoint || 
 		    Xserv.Utils.format(Xserv.DEFAULT_AUTH_URL, {'$1': this.secure ? 's' : '', 
 								'$2': Xserv.HOST, 
-								'$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT, 
-								'$4': this.app_id});
+								'$3': this.secure ? Xserv.TLS_PORT : Xserv.PORT});
 		
 		var headers = json.auth.headers || {};
+		headers["X-Xserv-AppId"] = this.app_id;
+		
 		var params = json.auth.params || {};
 		var payload = $.extend({
 		    socket_id : this.getSocketId(),
@@ -95,12 +96,10 @@
 		
 		$.ajax({cache: false, 
 			crossDomain: true,
-			type: 'post', 
+			type: 'get', 
 			url: endpoint,
 			headers: headers,
-			contentType: 'application/json; charset=UTF-8',
-			data: JSON.stringify(payload),
-			processData: false,
+			data: $.param(payload),
 			dataType: 'json'})
 		    .always(function(data_sign) {
 			delete json.auth;
@@ -345,7 +344,7 @@
 	    return uuid;
 	};
 	
-	prototype.update = function(topic, data, object_id, callback) {
+	prototype.update = function(topic, object_id, data, callback) {
 	    if (!this.isConnected()) return;
 	    
 	    var uuid = Xserv.Utils.generateUUID();
@@ -562,12 +561,12 @@
 	
 	Xserv.VERSION = '1.0.0';
 	
-	Xserv.HOST = '192.168.130.187';
+	Xserv.HOST = '192.168.1.129';
 	// Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
 	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
-	Xserv.DEFAULT_AUTH_URL = 'http$1://$2:$3/app/$4/auth_user';
+	Xserv.DEFAULT_AUTH_URL = 'http$1://$2:$3/user';
 	Xserv.DEFAULT_RI = 5000;
 	
 	// op

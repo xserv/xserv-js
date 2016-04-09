@@ -47,7 +47,7 @@
     
     <div class="panel">
       <input type="text" id="message" placeholder="Message"> 
-      <input type="text" id="object_id" placeholder="ObjectID">
+      <input type="text" id="object_id" placeholder="ObjectId">
       <button id="publish">Publish / Update</button>
     </div>
     
@@ -142,7 +142,7 @@
             }
           }
           if (object_id.length > 0) {
-             xserv.update($("#topic").val(), data, object_id, op_callback);
+             xserv.update($("#topic").val(), object_id, data, op_callback);
           } else {
              xserv.publish($("#topic").val(), data, op_callback);
           }
