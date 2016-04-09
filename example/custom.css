@@ -54,17 +54,8 @@ button {
     width: 200px;
 }
 
-#output {
+#output, #output2 {
     border: #aaa solid 1px;
-    padding: 2px;
-    font-size: 0.9em;
-    padding: 4px;
-    height: 230px;
-    overflow-y: scroll;
-}
-
-#output2 {
-    border: #ccc solid 1px;
     padding: 2px;
     font-size: 0.9em;
     padding: 4px;
