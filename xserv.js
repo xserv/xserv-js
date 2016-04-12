@@ -89,12 +89,21 @@
 		headers["X-Xserv-AppId"] = this.app_id;
 		
 		var params = json.auth.params || {};
+		var user = params.user || "";
+		var pass = params.pass || "";
+		if (user && pass) {
+		    delete params.user;
+		    delete params.pass;
+		}
 		var payload = $.extend({
 		    socket_id : this.getSocketId(),
 		    topic: json.topic
 		}, params);
 		
-		$.ajax({cache: false, 
+		$.ajax({beforeSend: function(xhr) { 
+			    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(user + ":" + pass));
+			},
+			cache: false, 
 			crossDomain: true,
 			type: 'get', 
 			url: endpoint,
@@ -105,7 +114,7 @@
 			delete json.auth;
 			
 			if (data_sign) {
-			    json.arg1 = params.user || '';
+			    json.arg1 = user;
 			    json.arg2 = data_sign.data;
 			    json.arg3 = data_sign.sign;
 			}
@@ -561,7 +570,7 @@
 	
 	Xserv.VERSION = '1';
 	
-	// Xserv.HOST = '192.168.1.131';
+	// Xserv.HOST = '192.168.130.187';
 	Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
