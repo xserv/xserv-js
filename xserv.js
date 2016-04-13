@@ -100,16 +100,20 @@
 		    topic: json.topic
 		}, params);
 		
-		$.ajax({beforeSend: function(xhr) { 
-			    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(user + ":" + pass));
-			},
-			cache: false, 
-			crossDomain: true,
-			type: 'get', 
-			url: endpoint,
-			headers: headers,
-			data: $.param(payload),
-			dataType: 'json'})
+		var request = {cache: false, 
+			       crossDomain: true,
+			       type: 'get', 
+			       url: endpoint,
+			       headers: headers,
+			       data: $.param(payload),
+			       dataType: 'json'};
+		if (user && pass) {
+		    request.beforeSend = function(xhr) { 
+			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(user + ":" + pass));
+		    };
+		}
+		
+		$.ajax(request)
 		    .always(function(data_sign) {
 			delete json.auth;
 			
