@@ -90,11 +90,7 @@
 		
 		var params = json.auth.params || {};
 		var user = params.user || "";
-		var pass = params.pass || "";
-		if (user && pass) {
-		    delete params.user;
-		    delete params.pass;
-		}
+		
 		var payload = $.extend({
 		    socket_id : this.getSocketId(),
 		    topic: json.topic
@@ -107,11 +103,6 @@
 			       headers: headers,
 			       data: $.param(payload),
 			       dataType: 'json'};
-		if (user && pass) {
-		    request.beforeSend = function(xhr) { 
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(user + ":" + pass));
-		    };
-		}
 		
 		$.ajax(request)
 		    .always(function(data_sign) {
@@ -574,8 +565,8 @@
 	
 	Xserv.VERSION = '1';
 	
-	// Xserv.HOST = '192.168.130.187';
-	Xserv.HOST = 'mobile-italia.com';
+	Xserv.HOST = '192.168.1.131';
+	// Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
 	Xserv.WS_URL = 'ws$1://$2:$3/ws/$4?version=$5';
