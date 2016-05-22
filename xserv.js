@@ -215,6 +215,12 @@
 		return 'topics';
 	    } else if (code == Xserv.OP_UPDATE) {
 		return 'update';
+	    } else if (code == Xserv.OP_UPDATE_ALL) {
+		return 'update_all';
+	    } else if (code == Xserv.OP_DELETE) {
+		return 'delete';
+	    } else if (code == Xserv.OP_DELETE_ALL) {
+		return 'delete_all';
 	    }
 	    return '';
 	};
@@ -359,6 +365,20 @@
 			     op: Xserv.OP_UPDATE, 
 			     topic: topic, 
 			     arg1: data,
+			     arg2: object_id});
+	    return uuid;
+	};
+	
+	prototype.delete = function(topic, object_id, callback) {
+	    if (!this.isConnected()) return;
+	    
+	    var uuid = Xserv.Utils.generateUUID();
+	    if (callback) {
+		this.callbacks[uuid] = callback;
+	    }
+	    send.bind(this)({uuid: uuid, 
+			     op: Xserv.OP_DELETE, 
+			     topic: topic,
 			     arg2: object_id});
 	    return uuid;
 	};
@@ -565,7 +585,7 @@
 	
 	Xserv.VERSION = '1';
 	
-	Xserv.HOST = '192.168.1.131';
+	Xserv.HOST = '192.168.1.132';
 	// Xserv.HOST = 'mobile-italia.com';
 	Xserv.PORT = '4332';
 	Xserv.TLS_PORT = '8332';
@@ -582,6 +602,9 @@
 	Xserv.OP_USERS = 204;
 	Xserv.OP_TOPICS = 205;
 	Xserv.OP_UPDATE = 300;
+	Xserv.OP_UPDATE_ALL = 301;
+	Xserv.OP_DELETE = 302;
+	Xserv.OP_DELETE_ALL = 303;
 	Xserv.OP_JOIN = 401;
 	Xserv.OP_LEAVE = 402;
 	// op result_code
