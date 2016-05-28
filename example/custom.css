@@ -67,10 +67,17 @@ button {
 .up span {
     display: table-cell;
     vertical-align: middle;
-    padding-right: 8px;
 }
 
-.up-span {
+.up-icon {
+    padding-right: 16px;
+}
+
+.up-label {
+    width: 120px;
+}
+
+.up-info {
     padding-bottom: 4px;
 }
 
