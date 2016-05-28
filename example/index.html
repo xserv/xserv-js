@@ -8,7 +8,7 @@
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="../xserv.js"></script>
+    <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
   </head>
   
   <body>
@@ -23,7 +23,7 @@
       </span>
       <span class="up-label up-span">Client INFO</span><span id="info" class="up-info">{}</span>
     </div>
-
+    
     <div class="controller">
       <div class="panel2">
 	<button id="connect" type="button" class="btn btn-sm">Connect</button>
@@ -68,9 +68,8 @@
     <script>
       $(document).ready(function() {
 
-        var xserv = new Xserv("9Pf80-3");
-        xserv.disableTLS();
-        // xserv.setReconnectInterval(20000);
+        var app_id = "9Pf80-3";
+        var xserv = new Xserv(app_id);
 
         xserv.addEventListener("connection_open", function() {
            $("#state").attr("fill", "green");

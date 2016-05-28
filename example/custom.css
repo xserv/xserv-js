@@ -97,3 +97,16 @@ pre code {
     margin-bottom: 9px;
     display: block;
 }
+
+.widget-content {
+    overflow-y: scroll;
+    height: 250px;
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 0px 0px 4px 4px;
+}
+
+.widget-content-row {
+    margin-top: 2px;
+    margin-bottom: 2px;

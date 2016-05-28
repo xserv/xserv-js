@@ -3,46 +3,53 @@
   <head>
     <title>Xserv JS SDK - Basic WebRTC Integration Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="custom.css">
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://mobile-italia.com/xserv/xserv.min.js"></script>
   </head>
   
   <body class="margintop">
     <h1>Xserv JS SDK - Basic WebRTC Integration Example</h1>
     <p>This example use a basic Xserv WebRTC integration. Share this page with your friends to test.</p>
-    <br>
-    <div id="video_div"></div>
     
-    <div class="box">
-      <span>
+    <div id="video_div"></div>
+
+    <div class="up">
+      <span class="up-icon">
 	<svg xmlns="https://www.w3.org/2000/svg" width="20px" height="20px">
 	  <circle id="state" cx="10" cy="10" r="10" fill="red" />
 	</svg>
       </span>
-      <span class="label">Connection Status</span>
-      <span id="info">{}</span>
+      <span class="up-label up-span">Client INFO</span><span id="info" class="up-info">{}</span>
+    </div>
+
+    <div class="controller">
+      
+      <div class="panel2">
+	<input type="text" id="topic" placeholder="Topic">
+	
+	<button id="subscribe" type="button" class="btn btn-primary btn-sm">Subscribe</button>
+	<button id="unsubscribe" type="button" class="btn btn-primary btn-sm">Unsubscribe</button>
+      </div>
+      
+      <div class="panel2">
+	<input type="text" id="message" placeholder="Message"> 
+	
+	<button id="publish" type="button" class="btn btn-primary btn-sm">Publish</button>
+      </div>
+      
     </div>
     
-    <div class="panel">
-      <input type="text" id="topic" placeholder="Topic"> 
-      <button id="subscribe">Subscribe</button>
-      <button id="unsubscribe">Unsubscribe</button>
-    </div>
-    
-    <div class="panel">
-      <input type="text" id="message" placeholder="Message">
-      <button id="publish">Publish</button>
-    </div>
-    
-    <pre id="output2"></pre>
+    <div class="widget-content"></div>
     
     <script>
       $(document).ready(function() {
 
         var app_id = "9Pf80-3";
         var xserv = new Xserv(app_id);
-        // xserv.setReconnectInterval(20000);
 
         xserv.addEventListener("connection_open", function() {
            $("#state").attr("fill", "green");
@@ -58,9 +65,9 @@
         });
 
         xserv.addEventListener("messages", function(json) {
-            var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
-            var html = "<div class='row'>" + prefix + json.data + "</div>";
-            $(html).hide().prependTo("#output2").fadeIn(1000);
+           var prefix = json.socket_id == xserv.getSocketId() ? "You: " : xserv.getSocketId() + ": "
+           var html = "<div class='widget-content-row'><strong>" + prefix + "</strong>" + json.data + "</div>";
+           $(html).hide().prependTo(".widget-content").fadeIn(1000);
         });
 
         xserv.addEventListener("operations", function(json) {
@@ -69,7 +76,7 @@
                 
             	xserv.createExtra("webrtc", json.topic, "video_div");
             } else if (json.op == Xserv.OP_UNSUBSCRIBE && json.rc == Xserv.RC_OK) {
-            	$("#rtc").html('');
+            	$("#video_div").html('');
             }
         });
 
