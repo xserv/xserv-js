@@ -1,21 +1,41 @@
 body {
     background-color: #fefefe;
-    padding-left: 8px;
-    padding-right: 8px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 0.95em;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 h1, h4 {
     color: #444 !important;
 }
 
+p {
+    color: #777 !important;
+}
+
 input[type="text"] {
-    width: 240px;
+    width: 250px;
+    height: 32px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
 button {
-    width: 120px;
+    width: 123px;
+}
+
+.margintop {
+    margin-top: 360px;
 }
 
 #video_div iframe {
@@ -29,61 +49,44 @@ button {
     border: none;
 }
 
-.panel {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.margintop {
-    margin-top: 360px;
-}
-
-.box {
+.controller {
     display: table;
-    height: 25px;
 }
 
-.box span {
-    color: #555;
+.controller input {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.up {
+    display: table;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.up span {
     display: table-cell;
     vertical-align: middle;
     padding-right: 8px;
 }
 
-.label {
-    width: 200px;
+.up-span {
+    padding-bottom: 4px;
 }
 
-#output, #output2 {
-    border: #aaa solid 1px;
-    padding: 2px;
-    font-size: 0.9em;
-    padding: 4px;
-    height: 230px;
-    overflow-y: scroll;
+.panel2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-#output_op {
-    border: #aaa solid 1px;
-    padding: 2px;
-    font-size: 0.9em;
-    height: 230px;
-    overflow-y: scroll;
-    white-space: pre-wrap;       /* CSS 3 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+pre {
+    font-size: 12px !important;
+    padding: 8px !important;
+    margin: 0 !important;
 }
 
-#output .row, #output_op .row {
-    border: #eee solid 1px;
-    margin-bottom: 2px;
-    padding: 6px;
-}
-
-#output2 .row {
-    font-size: 1.0em;
-    margin-bottom: 2px;
-    padding: 6px;
+pre code {
+    margin-top: 9px;
+    margin-bottom: 9px;
+    display: block;
 }
